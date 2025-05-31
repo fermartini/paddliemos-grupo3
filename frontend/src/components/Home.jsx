@@ -2,6 +2,7 @@ import React from 'react'
 import { BookingProvider } from '../context/BookingContext'
 import BookingWizard from './BookingWizard'
 import ThemeToggle from './ThemeToggle'
+<<<<<<< HEAD
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 
 function Home () {
@@ -26,6 +27,35 @@ function Home () {
         </button>
     </div>  
  
+=======
+import { useNavigate } from 'react-router-dom'
+
+function Home () {
+  const navigate = useNavigate()
+
+  /*   const handleLoginClick = () => {
+    navigate('/login')
+  }
+ */
+  const handleRegisterClick = () => {
+    navigate('/register')
+  }
+
+  return (
+    <BookingProvider>
+      <div className='absolute top-4 right-4 space-x-2'>
+        {/*<button className='btn btn-sm btn-primary mt-4' onClick={handleLoginClick}>
+          Ingresar
+        </button>*/}
+        <button
+          className='btn btn-sm btn-secondary mt-4'
+          onClick={handleRegisterClick}
+        >
+          Registrate
+        </button>
+      </div>
+
+>>>>>>> 4754d0f ([MERGE] added missing comps)
       <main className='min-h-screen bg-base-200 flex flex-col'>
         <header className='bg-base-100 shadow-md py-4'>
           <div className='container mx-auto px-4 flex justify-between items-center'>
