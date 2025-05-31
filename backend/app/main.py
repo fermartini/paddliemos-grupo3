@@ -1,15 +1,41 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-from typing import List
-from models import Base, Turno
-from schemas import TurnoOut
-from . import models, schemas
-from .database import engine, SessionLocal
-from . import crud
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from .routers import courts, reservations, time_slots
+from .database import engine
+from . import models
+
+# crear todas las tablas mucho muy importante
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title="Paddliemos API",
+    description="API for managing paddle court reservations",
+    version="1.0.0"
+) 
 
+# configurar CORS
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
+
+# incluyas las rutas
+app.include_router(courts.router)
+app.include_router(reservations.router)
+app.include_router(time_slots.router)
+
+<<<<<<< HEAD
 # Dependencia de base de datos
 def get_db():
     db = SessionLocal()
@@ -35,3 +61,12 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def obtener_ultimos_turnos(db: Session = Depends(get_db)):
     turnos = db.query(Turno).order_by(Turno.fecha.desc(), Turno.hora.desc()).limit(3).all()
     return turnos 
+=======
+@app.get("/")
+def read_root():
+    return {"message": "corriendo api de paddliemos!"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "tamos vivos"}
+>>>>>>> 43ba0d1 ([UPDATE] some endpoints, upgrade head, delete unnecesary files)
