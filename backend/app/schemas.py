@@ -102,9 +102,17 @@ class TimeSlotCreate(TimeSlotBase):
 
 class TimeSlotOut(TimeSlotBase):
     id: int
+    activo: bool | None = True
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+# Add this after the TimeSlotOut class
+class AvailableTimeSlotOut(TimeSlotOut):
+    available: bool
+
+    class Config:
+        from_attributes = True
 
 # --------------------
 # ReservationStatus
