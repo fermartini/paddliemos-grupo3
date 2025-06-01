@@ -11,12 +11,6 @@ models.Base.metadata.create_all(bind=engine)
 def seed():
     db: Session = SessionLocal()
 
-    # chequear si existe
-    if db.query(models.User).first():
-        print("Seed already applied.")
-        db.close()
-        return
-
     # 1. Companies
     companies = [
         models.Company(nombre="Paddle Club Palermo", direccion="Av. del Libertador 5000"),
@@ -212,5 +206,25 @@ def seed():
     print("Seed executed successfully.")
     db.close()
 
+def seed_time_slots():
+    db: Session = SessionLocal()
+    
+    # Clear existing time slots
+    db.query(models.TimeSlot).delete()
+    db.commit()
+    
+    # Create new time slots
+    time_slots = []
+    for hour in range(8, 22):
+        time_slots.append(models.TimeSlot(
+            hora_inicio=time(hour, 0),
+            hora_fin=time(hour + 1, 0)
+        ))
+    
+    db.add_all(time_slots)
+    db.commit()
+    print("Time slots created successfully.")
+    db.close()
+
 if __name__ == "__main__":
-    seed()
+    seed_time_slots()

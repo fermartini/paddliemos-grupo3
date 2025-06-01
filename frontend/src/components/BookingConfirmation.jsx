@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useBooking } from '../context/BookingContext'
 
 const BookingConfirmation = () => {
@@ -8,21 +8,32 @@ const BookingConfirmation = () => {
     selectedTimeSlot,
     setBookingStep,
     confirmBooking,
-    resetBooking
+    resetBooking,
+    error: bookingError
   } = useBooking()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [bookingComplete, setBookingComplete] = useState(false)
   const [bookingResult, setBookingResult] = useState(null)
+  const [error, setError] = useState(null)
 
   const handleConfirm = async () => {
     setIsSubmitting(true)
+    setError(null)
+
     try {
       const result = await confirmBooking()
-      setBookingResult(result)
-      setBookingComplete(true)
-    } catch (error) {
-      console.error('Error confirming booking:', error)
+      if (result) {
+        setBookingResult(result)
+        setBookingComplete(true)
+      } else {
+        setError(
+          'No se pudo completar la reserva. Por favor, inténtalo de nuevo.'
+        )
+      }
+    } catch (err) {
+      console.error('Error confirming booking:', err)
+      setError('Error al confirmar la reserva. Por favor, inténtalo de nuevo.')
     } finally {
       setIsSubmitting(false)
     }
@@ -36,7 +47,6 @@ const BookingConfirmation = () => {
     resetBooking()
   }
 
-  // Format date for display
   const formatDate = date => {
     if (!date) return ''
     const options = {
@@ -71,7 +81,7 @@ const BookingConfirmation = () => {
               </p>
               <p>
                 <span className='font-medium'>Cancha:</span>{' '}
-                {selectedCourt?.name}
+                {selectedCourt?.nombre}
               </p>
               <p>
                 <span className='font-medium'>Horario:</span>{' '}
@@ -99,13 +109,32 @@ const BookingConfirmation = () => {
             {formatDate(selectedDate)}
           </p>
           <p>
-            <span className='font-medium'>Cancha:</span> {selectedCourt?.name}
+            <span className='font-medium'>Cancha:</span> {selectedCourt?.nombre}
           </p>
           <p>
             <span className='font-medium'>Horario:</span>{' '}
             {selectedTimeSlot?.start} - {selectedTimeSlot?.end}
           </p>
         </div>
+
+        {(error || bookingError) && (
+          <div className='alert alert-error mt-4'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='stroke-current shrink-0 h-6 w-6'
+              fill='none'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
+              />
+            </svg>
+            <span>{error || bookingError}</span>
+          </div>
+        )}
 
         <div className='card-actions justify-between mt-6'>
           <button
