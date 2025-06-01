@@ -8,4 +8,4 @@ class Turno(Base):
     usuario_id = Column(Integer, index=True)
     fecha = Column(DateTime, nullable=False)
     descripcion = Column(String, nullable=True)
-    estado = Column(String, default="pendiente")  # pendiente, realizado, cancelado
+    estado = Column(String, default="pendiente")  
