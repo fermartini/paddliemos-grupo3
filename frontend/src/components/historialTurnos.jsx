@@ -43,7 +43,7 @@ function HistorialTurnos() {
             </div>
 
 
-            <div className="max-w-xl mx-auto mt-20 bg-white shadow-lg rounded-lg p-6">
+            <div className="max-w-xl mx-auto mt-20 shadow-lg rounded-lg p-6">
 
                 <h2 className="text-2xl font-bold text-center text-primary mb-4">
                     Historial de Turnos
