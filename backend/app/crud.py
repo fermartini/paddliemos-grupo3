@@ -4,6 +4,31 @@ from datetime import date
 from . import models, schemas
 
 # --------------------
+# CRUD de Usuarios
+# --------------------
+def get_user(db: Session, user_id: int):
+    return db.query(models.User).filter(models.User.id == user_id).first()
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+def create_user(db: Session, user: schemas.UserCreate):
+    #Esperar ver con el profe cómo armar el token de la contraseña, mientras tanto se hardcodea    
+    hardcoded_password = "usuario1234!"
+
+    db_user = models.User(
+        nombre=user.nombre,
+        email=user.email,
+        contraseña=hardcoded_password, 
+        role_id=user.role_id,
+        company_id=user.company_id
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+# --------------------
 # Court CRUD
 # --------------------
 def get_court(db: Session, court_id: int):
