@@ -2,7 +2,7 @@ import React from 'react';
 import Login from '../components/login/login';
 import Register from '../components/login/register';
 import HistorialTurnos from './components/historialTurnos';
-import PerfilUsuarios from './components/perfilUsuarios';
+import PerfilUsuarios from './components/PerfilUsuarios';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -49,7 +49,7 @@ function HistorialTurnosWrapper() {
         </button>
       </div>
 
-      <PerfilUsuario abierto={mostrarPerfil} cerrar={() => setMostrarPerfil(false)} />
+      <PerfilUsuarios abierto={mostrarPerfil} cerrar={() => setMostrarPerfil(false)} />
 
       <HistorialTurnos onOpenProfile={() => setMostrarPerfil(true)} />
 
