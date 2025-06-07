@@ -1,29 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react'; // ¡Importa useState!
 import Login from '../components/login/login';
 import Register from '../components/login/register';
 import HistorialTurnos from './components/historialTurnos';
-import PerfilUsuarios from './components/PerfilUsuarios';
+import PerfilUsuarios from './components/PerfilUsuarios'; // Asumo que el nombre del archivo es PerfilUsuarios.js
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/historialTurnos" element={<HistorialTurnos />} />
-        <Route path="/perlfilUsuarios" element={<PerfilUsuarios />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+// Componente que envuelve HistorialTurnos y PerfilUsuarios para manejar el estado del modal de perfil
 function HistorialTurnosWrapper() {
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{
         position: 'absolute',
         top: '16px',
@@ -37,7 +25,6 @@ function HistorialTurnosWrapper() {
           style={{
             padding: '8px 16px',
             border: '1px solid #12820e',
-            backgroundColor: 'white',
             color: '#12820e',
             borderRadius: '6px',
             cursor: 'pointer',
@@ -49,14 +36,15 @@ function HistorialTurnosWrapper() {
         </button>
       </div>
 
+
       <PerfilUsuarios abierto={mostrarPerfil} cerrar={() => setMostrarPerfil(false)} />
 
-      <HistorialTurnos onOpenProfile={() => setMostrarPerfil(true)} />
 
-
+      <HistorialTurnos />
     </div>
   );
 }
+
 function HomePage() {
   const navigate = useNavigate();
 
@@ -75,7 +63,7 @@ function HomePage() {
           Ingresar
         </button>
         <button className='btn btn-sm btn-secondary mt-4' onClick={handleRegisterClick}>
-          Registrate
+          Regístrate
         </button>
       </div>
       <section className='text-center space-y-8'>
@@ -105,6 +93,22 @@ function HomePage() {
         </aside>
       </section>
     </main>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<HomePage />} />
+        {/* Ahora renderizamos el wrapper que contiene tanto HistorialTurnos como PerfilUsuarios */}
+        <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
+        {/* Corregido el error tipográfico en la ruta */}
+        <Route path="/perfilUsuarios" element={<PerfilUsuarios abierto={false} cerrar={() => { }} />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

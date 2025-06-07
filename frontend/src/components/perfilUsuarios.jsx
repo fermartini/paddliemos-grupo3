@@ -1,72 +1,87 @@
-import { X, User, Mail, Calendar, LogOut } from "lucide-react"
+import React from 'react';
+import { X, User, Mail, Calendar, LogOut } from "lucide-react";
 
-function PerfilUsuario({ abierto, cerrar }) {
-    if (!abierto) return null
+function PerfilUsuario({ abierto, cerrar, userName, userEmail, proximoTurno }) {
+    if (!abierto) return null;
+
+    const formatearFechaTurno = (fechaISO) => {
+        if (!fechaISO) return 'N/A';
+        return new Date(fechaISO).toLocaleDateString('es-AR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md relative">
-                {/* Header del modal */}
-                <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-900">Perfil de Usuario</h2>
-                    <button onClick={cerrar} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-                        <X className="w-5 h-5 text-gray-500" />
+
+            <div className="bg-grey rounded-xl shadow-xl w-full max-w-sm relative animate-fade-in-up border-1 border-green-700">
+
+                <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                    <h2 className="text-2xl font-bold text-green-700">Usuario</h2>
+                    <button onClick={cerrar} className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        <X className="w-6 h-6 text-gray-500" />
                     </button>
                 </div>
 
-                {/* Contenido del modal */}
+
                 <div className="p-6">
-                    {/* Avatar */}
-                    <div className="flex justify-center mb-6">
-                        <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">
-                            <User className="w-10 h-10 text-gray-500" />
+
+                    <div className="flex justify-center mb-8">
+                        <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center border-1 border-blue-300 shadow-md">
+                            <User className="w-12 h-12 text-blue-600" />
                         </div>
                     </div>
 
-                    {/* Información del usuario */}
-                    <div className="space-y-4 mb-6">
-                        <div className="flex items-center gap-3">
-                            <User className="w-5 h-5 text-gray-500" />
-                            <div>
-                                <p className="text-sm text-gray-600">Nombre</p>
-                                <p className="font-medium text-gray-900">Juan Pérez</p>
+
+                    <div className="space-y-5 mb-8">
+
+                        <div className="flex flex-col items-center gap-4 p-3 bg-gray-50 rounded-lg sm:flex-row sm:items-start">
+                            <User className="w-5 h-5 text-gray-600 shrink-0" />
+
+
+                            <div className="flex-grow">
+                                <p className="text-sm text-gray-600 text-center sm:text-left">Nombre Completo</p>
+                                <p className="font-semibold text-gray-900 text-lg text-center sm:text-left">{userName || 'No disponible'}</p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <Mail className="w-5 h-5 text-gray-500" />
-                            <div>
-                                <p className="text-sm text-gray-600">Email</p>
-                                <p className="font-medium text-gray-900">juan.perez@email.com</p>
+                        <div className="flex flex-col items-center gap-4 p-3 bg-gray-50 rounded-lg sm:flex-row sm:items-start">
+                            <Mail className="w-5 h-5 text-gray-600 shrink-0" />
+                            <div className="flex-grow">
+                                <p className="text-sm text-gray-600 text-center sm:text-left">Correo Electrónico</p>
+                                <p className="font-semibold text-gray-900 text-lg text-center sm:text-left">{userEmail || 'No disponible'}</p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <Calendar className="w-5 h-5 text-gray-500" />
-                            <div>
-                                <p className="text-sm text-gray-600">Próximo turno</p>
-                                <p className="font-medium text-green-600">01/06/2025 - 20:00 hs</p>
+                        <div className="flex flex-col items-center gap-4 p-3 bg-gray-50 rounded-lg sm:flex-row sm:items-start">
+                            <Calendar className="w-5 h-5 text-gray-600 shrink-0" />
+                            <div className="flex-grow">
+                                <p className="text-sm text-gray-600 text-center sm:text-left">Próximo Turno</p>
+                                {proximoTurno ? (
+                                    <p className="font-semibold text-green-700 text-lg text-center sm:text-left">
+                                        {formatearFechaTurno(proximoTurno.fecha)} - {proximoTurno.hora} hs
+                                    </p>
+                                ) : (
+                                    <p className="font-semibold text-gray-500 text-lg text-center sm:text-left">No tienes turnos agendados.</p>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    {/* Botones */}
-                    <div className="flex gap-3">
-                        <button
-                            onClick={cerrar}
-                            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                            Cerrar
-                        </button>
-                        <button className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
-                            <LogOut className="w-4 h-4" />
+
+                    <div className="flex flex-col gap-4">
+
+                        <button className="w-full px-5 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-3 font-medium text-lg">
+                            <LogOut className="w-5 h-5" />
                             Cerrar Sesión
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default PerfilUsuario
+export default PerfilUsuario;
