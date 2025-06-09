@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useCallback } from 'react'
+
+const API_URL = 'http://localhost:8000' // despues lo mandamos al .env
 
 const BookingContext = createContext()
 
@@ -10,33 +12,68 @@ export const BookingProvider = ({ children }) => {
   const [selectedCourt, setSelectedCourt] = useState(null)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null)
   const [bookingStep, setBookingStep] = useState(1)
+  const [courts, setCourts] = useState([])
+  const [timeSlots, setTimeSlots] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-  const courts = [
-    { id: 1, name: 'Cancha 1', description: 'Cancha principal' },
-    { id: 2, name: 'Cancha 2', description: 'Cancha secundaria' },
-    { id: 3, name: 'Cancha 3', description: 'Cancha cubierta' }
-  ]
+  const fetchCourts = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await fetch(`${API_URL}/courts`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch courts')
+      }
+      const data = await response.json()
+      setCourts(data)
+    } catch (err) {
+      console.error('Error fetching courts:', err)
+      setError('Error loading courts. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-  // despues lo traemos del back
-  const generateTimeSlots = date => {
-    console.log(date)
-    return [
-      { id: 1, start: '08:00', end: '09:00', available: true },
-      { id: 2, start: '09:00', end: '10:00', available: true },
-      { id: 3, start: '10:00', end: '11:00', available: false },
-      { id: 4, start: '11:00', end: '12:00', available: true },
-      { id: 5, start: '12:00', end: '13:00', available: true },
-      { id: 6, start: '13:00', end: '14:00', available: false },
-      { id: 7, start: '14:00', end: '15:00', available: true },
-      { id: 8, start: '15:00', end: '16:00', available: true },
-      { id: 9, start: '16:00', end: '17:00', available: true },
-      { id: 10, start: '17:00', end: '18:00', available: false },
-      { id: 11, start: '18:00', end: '19:00', available: true },
-      { id: 12, start: '19:00', end: '20:00', available: true },
-      { id: 13, start: '20:00', end: '21:00', available: true },
-      { id: 14, start: '21:00', end: '22:00', available: true }
-    ]
-  }
+  const generateTimeSlots = useCallback(
+    async date => {
+      if (!date || !selectedCourt) return []
+
+      setLoading(true)
+      setError(null)
+
+      try {
+        const formattedDate = date.toISOString().split('T')[0]
+        const response = await fetch(
+          `${API_URL}/courts/${selectedCourt.id}/available-slots?fecha=${formattedDate}`
+        )
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch available time slots')
+        }
+
+        const data = await response.json()
+
+        // Transform API data to match our frontend format
+        const formattedTimeSlots = data.map(slot => ({
+          id: slot.id,
+          start: slot.hora_inicio,
+          end: slot.hora_fin,
+          available: slot.available
+        }))
+
+        setTimeSlots(formattedTimeSlots)
+        return formattedTimeSlots
+      } catch (err) {
+        console.error('Error fetching time slots:', err)
+        setError('Error loading time slots. Please try again.')
+        return []
+      } finally {
+        setLoading(false)
+      }
+    },
+    [selectedCourt]
+  )
 
   const resetBooking = () => {
     setSelectedDate(null)
@@ -46,19 +83,51 @@ export const BookingProvider = ({ children }) => {
   }
 
   const confirmBooking = async () => {
-    // TODO: hacer la confirmación en el back
-    console.log('Booking confirmed:', {
-      date: selectedDate,
-      courtId: selectedCourt?.id,
-      timeSlot: selectedTimeSlot
-    })
+    if (!selectedDate || !selectedCourt || !selectedTimeSlot) {
+      setError('Missing booking information')
+      return null
+    }
 
-    // TODO: llamado a la api!
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve({ success: true, bookingId: Math.floor(Math.random() * 1000) })
-      }, 500)
-    })
+    setLoading(true)
+    setError(null)
+
+    try {
+      // formateo YYYY-MM-DD para la API
+      const formattedDate = selectedDate.toISOString().split('T')[0]
+
+      const response = await fetch(`${API_URL}/reservations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: 1, // TODO: cambiarlo por el ID del usuario que obtengamos del usercontext
+          court_id: selectedCourt.id,
+          fecha: formattedDate,
+          time_slot_id: selectedTimeSlot.id,
+          status_id: 1 // 1 es el status "confirmado"
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Failed to create reservation')
+      }
+
+      const data = await response.json()
+      return {
+        success: true,
+        bookingId: data.id
+      }
+    } catch (err) {
+      console.error('Error confirming booking:', err)
+      setError(
+        err.message || 'Error confirming your booking. Please try again.'
+      )
+      return null
+    } finally {
+      setLoading(false)
+    }
   }
 
   const value = {
@@ -71,9 +140,13 @@ export const BookingProvider = ({ children }) => {
     bookingStep,
     setBookingStep,
     courts,
+    fetchCourts,
+    timeSlots,
     generateTimeSlots,
     resetBooking,
-    confirmBooking
+    confirmBooking,
+    loading,
+    error
   }
 
   return (
