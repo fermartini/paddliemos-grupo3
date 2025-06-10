@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import courts, reservations, time_slots
+from .routers import courts, reservations, time_slots, login
 from .database import engine
 from . import models
 
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(courts.router)
 app.include_router(reservations.router)
 app.include_router(time_slots.router)
+app.include_router(login.router)
 
 @app.get("/")
 def read_root():
