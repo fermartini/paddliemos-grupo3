@@ -40,6 +40,7 @@ class UserBase(BaseModel):
     email: EmailStr
 
 class UserCreate(UserBase):
+    user: str
     contraseña: str
     role_id: int
     company_id: int | None = None
@@ -48,6 +49,10 @@ class UserOut(UserBase):
     id: int
     role: RoleOut | None = None
     company: CompanyOut | None = None
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
     class Config:
         orm_mode = True

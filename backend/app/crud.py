@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from datetime import date
 from . import models, schemas
-
 # --------------------
 # CRUD de Usuarios
 # --------------------
