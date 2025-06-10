@@ -4,7 +4,7 @@ import BookingWizard from './BookingWizard'
 import ThemeToggle from './ThemeToggle'
 import { useNavigate } from 'react-router-dom'
 
-function Home () {
+function Home() {
   const navigate = useNavigate()
 
   /*   const handleLoginClick = () => {
@@ -22,7 +22,7 @@ function Home () {
           Ingresar
         </button>*/}
         <button
-          className='btn btn-sm btn-secondary mt-4'
+          className='btn btn-sm btn-secondary mt-6'
           onClick={handleRegisterClick}
         >
           Registrate
