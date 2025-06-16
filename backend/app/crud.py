@@ -38,6 +38,17 @@ def delete_user(db: Session, user_id: int):
         return db_user
     return None
 
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        update_data = user_update.model_dump(exclude_unset=True) 
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    return db_user
+
 # --------------------
 # Court CRUD
 # --------------------
