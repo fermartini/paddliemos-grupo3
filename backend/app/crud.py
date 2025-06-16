@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from datetime import date
-from . import models, schemas
+from . import models, schemas, auth
 # --------------------
 # CRUD de Usuarios
 # --------------------
@@ -11,14 +11,17 @@ def get_user(db: Session, user_id: int):
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
+
+def get_user_by_name(db: Session, name: str):
+    return db.query(models.User).filter(models.User.nombre == name).first()
+
 def create_user(db: Session, user: schemas.UserCreate):
-    #Esperar ver con el profe cómo armar el token de la contraseña, mientras tanto se hardcodea    
-    hardcoded_password = "usuario1234!"
+    hashed_password = auth.get_password_hash(user.contraseña)
 
     db_user = models.User(
         nombre=user.nombre,
         email=user.email,
-        contraseña=hardcoded_password, 
+        contraseña=hashed_password,
         role_id=user.role_id,
         company_id=user.company_id
     )
@@ -26,6 +29,14 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def delete_user(db: Session, user_id: int):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return db_user
+    return None
 
 # --------------------
 # Court CRUD
