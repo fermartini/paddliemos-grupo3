@@ -40,8 +40,7 @@ class UserBase(BaseModel):
     email: EmailStr
 
 class UserCreate(UserBase):
-    user: str
-    contraseña: str
+    contraseña: str 
     role_id: int
     company_id: int | None = None
 
@@ -50,12 +49,25 @@ class UserOut(UserBase):
     role: RoleOut | None = None
     company: CompanyOut | None = None
 
+    class Config:
+        from_attributes = True 
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    contraseña: str
+                                           
 class Token(BaseModel):
     access_token: str
     token_type: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True 
+
+class TokenData(BaseModel):
+    email: str | None = None
+
+class UserNombreResponse(BaseModel):
+    nombre: str
 
 # --------------------
 # CourtType

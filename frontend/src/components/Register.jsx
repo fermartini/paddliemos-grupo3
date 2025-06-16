@@ -45,13 +45,38 @@ function Register() {
     }
 
     try {
-//TODO ver de conectarlo todo al back para la persistencia
-      console.log('Datos enviados al servidor:', formData);
-      setMensajeExito('Se ha registrado el nuevo usuario');
-      setFormData({ nombre: '', email: '', password: '', confirmarPassword: '' });
+      const userData = {
+        nombre: formData.nombre,
+        email: formData.email,
+        contraseña: formData.password, 
+        role_id: 2, 
+      };
+
+      const response = await fetch('http://127.0.0.1:8000/login/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json(); 
+
+      if (response.ok) { 
+        console.log('Usuario registrado exitosamente:', data);
+        setMensajeExito('Se ha registrado el nuevo usuario.');
+        setFormData({ nombre: '', email: '', password: '', confirmarPassword: '' });
+      } else {
+        console.error('Error al registrar el usuario:', data);
+        if (data.detail) {
+          setErrores({ general: data.detail });
+        } else {
+          setErrores({ general: 'Hubo un error al registrar el usuario. Inténtelo de nuevo, por favor.' });
+        }
+      }
     } catch (error) {
-      console.error('Error al registrar el usuario:', error);
-      setErrores({ general: 'Hubo un error al registrar el usuario. Inténtelo de nuevo, por favor' });
+      console.error('Error de conexión o inesperado:', error);
+      setErrores({ general: 'No se pudo conectar con el servidor. Verifique que el backend esté funcionando.' });
     }
   };
 
