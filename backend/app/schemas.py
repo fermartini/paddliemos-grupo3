@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import date, time
+from typing import Optional
 
 # --------------------
 # Company
@@ -68,6 +69,9 @@ class TokenData(BaseModel):
 
 class UserNombreResponse(BaseModel):
     nombre: str
+
+class UserUpdate(BaseModel):
+    nombre: Optional[str] = None
 
 # --------------------
 # CourtType

@@ -123,3 +123,26 @@ async def delete_user_by_id(
 
     crud.delete_user(db, user_id=user_id)
     return {"message": "Usuario eliminado exitosamente"}
+
+@router.put("/users/{user_id}", response_model=schemas.UserOut)
+async def update_user_profile(
+    user_id: int,
+    user_update: schemas.UserUpdate, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user) 
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para modificar este perfil."
+        )
+
+    updated_user = crud.update_user(db, user_id=user_id, user_update=user_update)
+
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuario no encontrado."
+        )
+
+    return updated_user
