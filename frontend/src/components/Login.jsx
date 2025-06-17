@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [formData, setFormData] = useState({
-    username: '', // Para el email del usuario
-    password: '', // Para la contraseña
+    username: '', 
+    password: '', 
   });
 
   const [errores, setErrores] = useState({});
   const [mensajeExito, setMensajeExito] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // Nuevo estado para el modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false); 
 
   const navigate = useNavigate();
 
@@ -18,13 +18,16 @@ function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleGoBack = () => {
+  navigate('/'); 
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrores({});
     setMensajeExito('');
-    setShowSuccessModal(false); // Asegúrate de que el modal esté cerrado al iniciar el submit
+    setShowSuccessModal(false); 
 
-    // Validaciones básicas del formulario
     const nuevosErrores = {};
     if (!formData.username.trim()) {
       nuevosErrores.username = 'El email es requerido.';
@@ -59,11 +62,11 @@ function Login() {
         localStorage.setItem('tokenType', data.token_type);
 
         setMensajeExito('¡Sesión iniciada con éxito!');
-        setShowSuccessModal(true); // Mostrar el modal de éxito
+        setShowSuccessModal(true); 
 
         setTimeout(() => {
-          navigate('/'); // Redirige al Home
-        }, 2000); // 2000 milisegundos = 2 segundos
+          navigate('/'); 
+        }, 2000); 
 
       } else {
         console.error('Error en el login:', data);
@@ -97,7 +100,7 @@ function Login() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Tu email"
+              placeholder="Ingrese su email"
             />
              {errores.username && <p className="text-red-500 text-xs italic">{errores.username}</p>}
           </div>
@@ -112,16 +115,25 @@ function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Tu contraseña"
+              placeholder="Ingrese su contraseña"
             />
             {errores.password && <p className="text-red-500 text-xs italic">{errores.password}</p>}
           </div>
-          <button
-            className="bg-primary hover:bg-primary-focus text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-            type="submit"
-          >
-            Entrar
-          </button>
+          <div className="w-40 mx-auto flex flex-col space-y-2">
+            <button
+              type="submit"
+              className="btn btn-primary rounded-lg w-full text-black"  
+            >
+              Ingresar
+            </button>
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="btn btn-secondary rounded-lg w-full text-black" 
+            >
+              Volver
+            </button>
+          </div>
         </form>
       </div>
 
