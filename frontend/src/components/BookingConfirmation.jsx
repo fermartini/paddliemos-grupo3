@@ -80,7 +80,8 @@ const BookingConfirmation = () => {
                 {formatDate(selectedDate)}
               </p>
               <p>
-                <span className='font-medium'>Cancha:</span>{' '}
+                {/* <span className='font-medium'>Cancha:</span>{' '} */}
+                <span className='font-medium'>Clínica de rehabilitación:</span>{' '}
                 {selectedCourt?.nombre}
               </p>
               <p>
@@ -109,7 +110,8 @@ const BookingConfirmation = () => {
             {formatDate(selectedDate)}
           </p>
           <p>
-            <span className='font-medium'>Cancha:</span> {selectedCourt?.nombre}
+            {/* <span className='font-medium'>Cancha:</span> {selectedCourt?.nombre} */}
+            <span className='font-medium'>Clínica de Rehabilitación:</span> {selectedCourt?.nombre}
           </p>
           <p>
             <span className='font-medium'>Horario:</span>{' '}

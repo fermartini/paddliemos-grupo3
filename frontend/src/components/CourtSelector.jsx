@@ -29,7 +29,8 @@ const CourtSelector = () => {
     return (
       <div className='card bg-base-100 shadow-xl'>
         <div className='card-body'>
-          <h2 className='card-title text-primary'>Cargando canchas...</h2>
+          {/* <h2 className='card-title text-primary'>Cargando canchas...</h2> */}
+          <h2 className='card-title text-primary'>Cargando clínicas de rehabilitación...</h2>
           <div className='flex justify-center'>
             <span className='loading loading-spinner loading-lg'></span>
           </div>
@@ -57,10 +58,12 @@ const CourtSelector = () => {
   return (
     <div className='card bg-base-100 shadow-xl'>
       <div className='card-body'>
-        <h2 className='card-title text-primary'>Selecciona una cancha</h2>
+        {/* <h2 className='card-title text-primary'>Selecciona una cancha</h2> */}
+        <h2 className='card-title text-primary'>Selecciona una clínica para tu rehabilitación</h2>
 
         {courts.length === 0 ? (
-          <p>No hay canchas disponibles</p>
+          // <p>No hay canchas disponibles</p>
+          <p>No hay clínicas de rehabilitación disponibles</p>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
             {courts.map(court => (
@@ -75,7 +78,8 @@ const CourtSelector = () => {
                   }`}
               >
                 <div className='card-body p-4'>
-                  <h3 className='card-title text-lg'>{court.nombre}</h3>
+                  {/* <h3 className='card-title text-lg'>{court.nombre}</h3> */}
+                  <h3 className='card-title text-lg'>Sanatorio Colegiales</h3>
                   <p>{court.ubicacion}</p>
                   {!court.disponible && (
                     <div className='badge badge-warning'>No disponible</div>

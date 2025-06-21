@@ -15,8 +15,11 @@ const BookingWizard = () => {
           <li className={`step ${bookingStep >= 1 ? 'step-primary' : ''}`}>
             Fecha
           </li>
-          <li className={`step ${bookingStep >= 2 ? 'step-primary' : ''}`}>
+          {/* <li className={`step ${bookingStep >= 2 ? 'step-primary' : ''}`}>
             Cancha
+          </li> */}
+                    <li className={`step ${bookingStep >= 2 ? 'step-primary' : ''}`}>
+            Clínica de Rehabilitación
           </li>
           <li className={`step ${bookingStep >= 3 ? 'step-primary' : ''}`}>
             Horario
