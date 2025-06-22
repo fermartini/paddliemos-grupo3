@@ -1,12 +1,12 @@
-import React, { useState } from 'react'; // ¡Importa useState!
+import React, { useState } from 'react'; 
 import Login from '../components/login/login';
 import Register from '../components/login/register';
 import HistorialTurnos from './components/historialTurnos';
-import PerfilUsuarios from './components/PerfilUsuarios'; // Asumo que el nombre del archivo es PerfilUsuarios.js
+import PerfilUsuarios from './components/PerfilUsuarios'; 
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
-// Componente que envuelve HistorialTurnos y PerfilUsuarios para manejar el estado del modal de perfil
+
 function HistorialTurnosWrapper() {
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
 
@@ -103,9 +103,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<HomePage />} />
-        {/* Ahora renderizamos el wrapper que contiene tanto HistorialTurnos como PerfilUsuarios */}
+        
         <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
-        {/* Corregido el error tipográfico en la ruta */}
+     
         <Route path="/perfilUsuarios" element={<PerfilUsuarios abierto={false} cerrar={() => { }} />} />
       </Routes>
     </BrowserRouter>
