@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react'; // preparo componente para hacer fetch a el endpoint de historial
+
 import { useNavigate } from 'react-router-dom';
 import { Calendar } from "lucide-react";
 
@@ -12,11 +14,47 @@ const turnosEjemplo = [
 ];
 
 function HistorialTurnos() {
-    const [turnos, setTurnos] = useState(turnosEjemplo);
+    const [turnos, setTurnos] = useState([]); // Inicializo el estado de turnos como un array vacío]);
+    const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
+    const [error, setError] = useState(null); // Estado para manejar errores
+
     const [busqueda, setBusqueda] = useState('');
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
     const [turnoAConfirmar, setTurnoAConfirmar] = useState(null);
     const navigate = useNavigate();
+
+    //
+    useEffect(() => {
+        const userId = localStorage.getItem('userId'); // 
+
+    if (!userId) {
+      setError('Usuario no autenticado');
+      setLoading(false);
+      return;
+    }
+
+    fetch(`http://localhost:8000/reservations/ultimos/${userId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Error al cargar las reservas');
+        return res.json();
+      })
+      .then(data => {
+        const turnosFormateados = data.map(turno => ({
+          id: turno.id,
+          fecha: turno.fecha,
+          hora: turno.time_slot?.hora_inicio || 'N/A',
+          estado: turno.status?.nombre || 'Desconocido',
+        }));
+        setTurnos(turnosFormateados);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+    //
 
     const handleAbrirConfirmacion = (turno) => {
         setTurnoAConfirmar(turno);
@@ -54,6 +92,12 @@ function HistorialTurnos() {
     const turnosFiltrados = turnos.filter(turno =>
         busqueda === '' || turno.fecha === busqueda
     ).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+    // Si no hay turnos, mostrar un mensaje de carga o error
+    // Si hay un error, mostrar un mensaje de error
+    if (loading) return <p className="text-center mt-10">Cargando turnos...</p>;
+    if (error) return <p className="text-center mt-10 text-red-600">Error: {error}</p>;
+
 
     return (
         <div className='bg-base-100 shadow-md rounded-xl p-6 mb-10 relative'>

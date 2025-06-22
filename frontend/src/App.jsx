@@ -1,35 +1,15 @@
-<<<<<<< HEAD
-import React from 'react'
-import Login from './components/Login'
-import Register from './components/Register'
-import Home from './components/Home'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './App.css'
-=======
-import React, { useState } from 'react'; // ¡Importa useState!
-import Login from '../components/login/login';
-import Register from '../components/login/register';
-import HistorialTurnos from './components/historialTurnos';
-import PerfilUsuarios from './components/PerfilUsuarios'; // Asumo que el nombre del archivo es PerfilUsuarios.js
+import React, { useState } from 'react';
+import Login from './components/Login';
+import Register from './components/Register';
+import HistorialTurnos from './components/HistorialTurnos';
+import PerfilUsuarios from './components/PerfilUsuarios';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
-// Componente que envuelve HistorialTurnos y PerfilUsuarios para manejar el estado del modal de perfil
 function HistorialTurnosWrapper() {
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
->>>>>>> develop-anna
 
   return (
-<<<<<<< HEAD
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/' element={<Home />} />
-      </Routes>
-    </BrowserRouter>
-  )
-=======
     <div style={{ minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{
         position: 'absolute',
@@ -55,14 +35,10 @@ function HistorialTurnosWrapper() {
         </button>
       </div>
 
-
       <PerfilUsuarios abierto={mostrarPerfil} cerrar={() => setMostrarPerfil(false)} />
-
-
       <HistorialTurnos />
     </div>
   );
->>>>>>> develop-anna
 }
 
 function HomePage() {
@@ -123,9 +99,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<HomePage />} />
-        {/* Ahora renderizamos el wrapper que contiene tanto HistorialTurnos como PerfilUsuarios */}
         <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
-        {/* Corregido el error tipográfico en la ruta */}
         <Route path="/perfilUsuarios" element={<PerfilUsuarios abierto={false} cerrar={() => { }} />} />
       </Routes>
     </BrowserRouter>

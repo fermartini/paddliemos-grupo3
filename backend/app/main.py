@@ -6,7 +6,7 @@ from typing import List
 from .routers import courts, reservations, time_slots
 from .database import engine, SessionLocal
 from . import models, schemas, crud
-from .models import Turno
+from .turno import Turno
 from .schemas import TurnoOut
 
 # Crear todas las tablas (muy importante)
@@ -61,10 +61,18 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email ya registrado")
     return crud.create_user(db=db, user=user)
 
-@app.get("/turnos/ultimos", response_model=List[TurnoOut])
-def obtener_ultimos_turnos(db: Session = Depends(get_db)):
-    turnos = db.query(Turno).order_by(Turno.fecha.desc(), Turno.hora.desc()).limit(3).all()
-    return turnos
+#Modifico para que devuelva los ultimos 3 turnos de un usuario especifico
+
+@app.get("/reservations/ultimos/{user_id}", response_model=List[schemas.ReservationOut])
+def obtener_ultimas_reservas_usuario(user_id: int, db: Session = Depends(get_db)):
+    return crud.get_last_3_matches(db, user_id)
+
+# comento lo anterior por si hago cagada :D
+
+## @app.get("/turnos/ultimos", response_model=List[TurnoOut])
+# def obtener_ultimos_turnos(db: Session = Depends(get_db)):
+#     turnos = db.query(Turno).order_by(Turno.fecha.desc(), Turno.hora.desc()).limit(3).all()
+#     return turnos
 
 # Endpoints básicos de Nico
 
