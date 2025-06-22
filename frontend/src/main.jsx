@@ -10,4 +10,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <App />
     </BookingProvider>
   </React.StrictMode>
+<<<<<<< HEAD
 )
+=======
+)
+>>>>>>> develop-anna
