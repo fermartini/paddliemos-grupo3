@@ -1,8 +1,8 @@
-import React, { useState } from 'react'; 
-import Login from '../components/login/login';
-import Register from '../components/login/register';
-import HistorialTurnos from './components/historialTurnos';
-import PerfilUsuarios from './components/PerfilUsuarios'; 
+import React, { useState } from 'react';
+import Login from "./components/Login";
+import Register from "./components/Register";
+import HistorialTurnos from "./components/HistorialTurnos";
+import PerfilUsuarios from './components/PerfilUsuario';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -20,20 +20,7 @@ function HistorialTurnosWrapper() {
         gap: '8px',
         zIndex: 10,
       }}>
-        <button
-          onClick={() => setMostrarPerfil(true)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #12820e',
-            color: '#12820e',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '500',
-          }}
-        >
-          Mi Perfil
-        </button>
+
       </div>
 
 
@@ -103,10 +90,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<HomePage />} />
-        
-        <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
-     
-        <Route path="/perfilUsuarios" element={<PerfilUsuarios abierto={false} cerrar={() => { }} />} />
+
+        <Route path="/HistorialTurnos" element={<HistorialTurnosWrapper />} />
+
+        <Route path="/PerfilUsuarios" element={<PerfilUsuarios abierto={false} cerrar={() => { }} />} />
       </Routes>
     </BrowserRouter>
   );
