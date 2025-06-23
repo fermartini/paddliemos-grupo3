@@ -103,7 +103,7 @@ async def login(
         )
 
     access_token = auth.create_access_token(data={"sub": db_user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": db_user.id, "user_name": db_user.nombre, "user_email": db_user.email}
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_200_OK)
 async def delete_user_by_id(

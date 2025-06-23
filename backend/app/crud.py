@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from datetime import date
 from . import models, schemas, auth
+from typing import Optional
 # --------------------
 # CRUD de Usuarios
 # --------------------
@@ -18,7 +19,7 @@ def get_user_by_name(db: Session, name: str):
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = auth.get_password_hash(user.contraseña)
 
-    db_user = models.User(
+    db_user = models.User(        
         nombre=user.nombre,
         email=user.email,
         contraseña=hashed_password,
@@ -49,12 +50,13 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
         db.refresh(db_user)
     return db_user
 
+
+
 # --------------------
 # Court CRUD
 # --------------------
 def get_court(db: Session, court_id: int):
     return db.query(models.Court).filter(models.Court.id == court_id).first()
-
 def get_courts(db: Session, company_id: int = None, available_only: bool = False):
     query = db.query(models.Court)
     if company_id:
@@ -79,7 +81,6 @@ def get_time_slots(db: Session):
 
 def get_reservation(db: Session, reservation_id: int):
     return db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
-
 def get_reservations(db: Session, user_id: int = None, court_id: int = None, fecha: date = None):
     query = db.query(models.Reservation)
     if user_id:
@@ -136,3 +137,14 @@ def get_available_time_slots(db: Session, court_id: int, fecha: date):
     except Exception as e:
         print(f"Error in get_available_time_slots: {str(e)}")
         raise
+
+
+# Historial ultimos 3 partidos  
+
+def get_last_3_matches(db: Session, user_id: int):
+    return db.query(models.Reservation)\
+        .filter(models.Reservation.user_id == user_id)\
+        .order_by(models.Reservation.fecha.desc(), models.Reservation.time_slot_id.desc())\
+        .limit(3)\
+        .all()
+
