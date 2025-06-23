@@ -1,11 +1,22 @@
 import React from "react";
 import { X, User, Mail, Calendar, LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 function PerfilUsuario({ abierto, cerrar }) {
   if (!abierto) return null; // Não renderiza nada se 'abierto' for falso
 
-  const userName = localStorage.getItem("userName");
-  const userEmail = localStorage.getItem("userEmail");
+  const { user, logout } = useAuth();
+  const handleLogoutClick = () => {
+    logout();
+
+    setLogoutMessage("¡Tu sesión ha sido cerrada con éxito!");
+    setShowLogoutModal(true);
+
+    setTimeout(() => {
+      setShowLogoutModal(false);
+      navigate("/");
+    }, 2000);
+  };
 
   const formatearFechaTurno = (fechaISO) => {
     if (!fechaISO) return "N/A";
@@ -44,7 +55,7 @@ function PerfilUsuario({ abierto, cerrar }) {
                   Nombre Completo
                 </p>
                 <p className="font-semibold text-base-content text-lg text-center sm:text-left">
-                  {userName || "No disponible"}
+                  {user.name || "No disponible"}
                 </p>
               </div>
             </div>
@@ -56,7 +67,7 @@ function PerfilUsuario({ abierto, cerrar }) {
                   Correo Electrónico
                 </p>
                 <p className="font-semibold text-base-content text-lg text-center sm:text-left">
-                  {userEmail || "No disponible"}
+                  {user.email || "No disponible"}
                 </p>
               </div>
             </div>
@@ -81,8 +92,10 @@ function PerfilUsuario({ abierto, cerrar }) {
           </div>
 
           <div className="flex flex-col gap-4">
-            <button className="btn btn-error w-full text-lg">
-              <LogOut className="w-5 h-5" />
+            <button
+              className="btn btn-error w-full text-lg"
+              onClick={handleLogoutClick}
+            >
               Cerrar Sesión
             </button>
           </div>

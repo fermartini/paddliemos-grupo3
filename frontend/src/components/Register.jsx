@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -9,9 +10,14 @@ function Register() {
     confirmarPassword: "",
   });
 
-  const [errores, setErrores] = useState({});
-  const [mensajeExito, setMensajeExito] = useState("");
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const {
+    registerContext,
+    errors,
+    loading,
+    successMessage,
+    showSuccessModal,
+    setShowSuccessModal,
+  } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,134 +31,13 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrores({});
-    setMensajeExito("");
-    setShowSuccessModal(false);
 
-    const nuevosErrores = {};
-    if (!formData.nombre.trim()) {
-      nuevosErrores.nombre = "El nombre es requerido.";
-    }
-    if (!formData.email.trim()) {
-      nuevosErrores.email = "El email es requerido.";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      nuevosErrores.email = "El email no es válido.";
-    }
-    if (!formData.password) {
-      nuevosErrores.password = "La contraseña es requerida.";
-    } else if (formData.password.length < 6) {
-      nuevosErrores.password =
-        "La contraseña debe tener al menos 6 caracteres.";
-    }
+    // Validación básica
     if (formData.password !== formData.confirmarPassword) {
-      nuevosErrores.confirmarPassword = "Las contraseñas no son coincidentes.";
-    }
-
-    if (Object.keys(nuevosErrores).length > 0) {
-      setErrores(nuevosErrores);
       return;
     }
 
-    try {
-      const userData = {
-        nombre: formData.nombre,
-        email: formData.email,
-        contraseña: formData.password,
-        role_id: 2,
-      };
-
-      const registerResponse = await fetch(
-        "http://127.0.0.1:8000/login/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
-      );
-
-      const registerData = await registerResponse.json();
-
-      if (registerResponse.ok) {
-        console.log("Usuario registrado exitosamente:", registerData);
-
-        try {
-          const loginFormData = new URLSearchParams();
-          loginFormData.append("username", formData.email);
-          loginFormData.append("password", formData.password);
-
-          const loginResponse = await fetch("http://127.0.0.1:8000/login/try", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: loginFormData.toString(),
-          });
-
-          const loginData = await loginResponse.json();
-
-          if (loginResponse.ok) {
-            console.log("Login exitoso después del registro:", loginData);
-            localStorage.setItem("authToken", loginData.access_token);
-            localStorage.setItem("tokenType", loginData.token_type);
-            localStorage.setItem("userId", loginData.user_id);
-            localStorage.setItem("userName", loginData.user_name);
-            localStorage.setItem("userEmail", loginData.user_email);
-
-            setMensajeExito("¡Registro exitoso!");
-            setShowSuccessModal(true);
-
-            setTimeout(() => {
-              setShowSuccessModal(false);
-              navigate("/");
-            }, 2000);
-          } else {
-            console.error("Error al loguear después del registro:", loginData);
-            setErrores({
-              general:
-                loginData.detail ||
-                "Error al iniciar sesión automáticamente después del registro.",
-            });
-          }
-        } catch (loginError) {
-          console.error(
-            "Error de red o inesperado durante el login post-registro:",
-            loginError
-          );
-          setErrores({
-            general:
-              "No se pudo iniciar sesión automáticamente. Intenta iniciar sesión manualmente.",
-          });
-        }
-
-        setFormData({
-          nombre: "",
-          email: "",
-          password: "",
-          confirmarPassword: "",
-        });
-      } else {
-        console.error("Error al registrar el usuario:", registerData);
-        if (registerData.detail) {
-          setErrores({ general: registerData.detail });
-        } else {
-          setErrores({
-            general:
-              "Hubo un error al registrar el usuario. Inténtelo de nuevo, por favor.",
-          });
-        }
-      }
-    } catch (error) {
-      console.error(
-        "Error de conexión o inesperado durante el registro:",
-        error
-      );
-      setErrores({
-        general:
-          "No se pudo conectar con el servidor. Verifique que el backend esté funcionando.",
-      });
-    }
+    await registerContext(formData.nombre, formData.email, formData.password);
   };
 
   return (
@@ -161,8 +46,8 @@ function Register() {
         <h2 className="text-2xl font-semibold mb-4 text-primary">
           Registro de Usuario
         </h2>
-        {errores.general && (
-          <div className="alert alert-error mb-4">{errores.general}</div>
+        {errors.general && (
+          <div className="alert alert-error mb-4">{errors.general}</div>
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -180,8 +65,8 @@ function Register() {
               onChange={handleChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
             />
-            {errores.nombre && (
-              <p className="text-red-500 text-xs italic">{errores.nombre}</p>
+            {errors.nombre && (
+              <p className="text-red-500 text-xs italic">{errors.nombre}</p>
             )}
           </div>
           <div>
@@ -199,8 +84,8 @@ function Register() {
               onChange={handleChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
             />
-            {errores.email && (
-              <p className="text-red-500 text-xs italic">{errores.email}</p>
+            {errors.email && (
+              <p className="text-red-500 text-xs italic">{errors.email}</p>
             )}
           </div>
           <div>
@@ -218,8 +103,8 @@ function Register() {
               onChange={handleChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
             />
-            {errores.password && (
-              <p className="text-red-500 text-xs italic">{errores.password}</p>
+            {errors.password && (
+              <p className="text-red-500 text-xs italic">{errors.password}</p>
             )}
           </div>
           <div>
@@ -237,9 +122,9 @@ function Register() {
               onChange={handleChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
             />
-            {errores.confirmarPassword && (
+            {errors.confirmarPassword && (
               <p className="text-red-500 text-xs italic">
-                {errores.confirmarPassword}
+                {errors.confirmarPassword}
               </p>
             )}
           </div>
@@ -265,7 +150,7 @@ function Register() {
         <div className="modal modal-open backdrop-blur-sm">
           <div className="modal-box">
             <h3 className="font-bold text-lg text-success">¡Éxito!</h3>
-            <p className="py-2">{mensajeExito}</p>
+            <p className="py-2">{successMessage}</p>
             <p className="py-2">
               Aguarde unos instantes, será redirigido a la página principal.
             </p>

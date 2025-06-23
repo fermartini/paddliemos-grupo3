@@ -7,7 +7,7 @@ const BookingContext = createContext();
 // eslint-disable-next-line react-refresh/only-export-components
 export const useBooking = () => useContext(BookingContext);
 
-export const BookingProvider = ({ children }) => {
+export const BookingProvider = ({ children, user }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedCourt, setSelectedCourt] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
@@ -82,7 +82,7 @@ export const BookingProvider = ({ children }) => {
     setBookingStep(1);
   };
 
-  const confirmBooking = async () => {
+  const confirmBooking = async (userId) => {
     if (!selectedDate || !selectedCourt || !selectedTimeSlot) {
       setError("Missing booking information");
       return null;
@@ -94,7 +94,6 @@ export const BookingProvider = ({ children }) => {
     try {
       // formateo YYYY-MM-DD para la API
       const formattedDate = selectedDate.toISOString().split("T")[0];
-      const userId = localStorage.getItem("userId");
 
       const response = await fetch(`${API_URL}/reservations`, {
         method: "POST",
@@ -102,7 +101,7 @@ export const BookingProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: userId, // TODO: cambiarlo por el ID del usuario que obtengamos del usercontext
+          user_id: userId,
           court_id: selectedCourt.id,
           fecha: formattedDate,
           time_slot_id: selectedTimeSlot.id,

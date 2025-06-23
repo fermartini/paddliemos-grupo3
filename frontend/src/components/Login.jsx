@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Login() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
+  const { login } = useAuth();
 
   const [errores, setErrores] = useState({});
   const [mensajeExito, setMensajeExito] = useState("");
@@ -15,7 +18,7 @@ function Login() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleGoBack = () => {
@@ -24,69 +27,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrores({});
-    setMensajeExito("");
-    setShowSuccessModal(false);
-
-    const nuevosErrores = {};
-    if (!formData.username.trim()) {
-      nuevosErrores.username = "El email es requerido.";
-    }
-    if (!formData.password.trim()) {
-      nuevosErrores.password = "La contraseña es requerida.";
-    }
-
-    if (Object.keys(nuevosErrores).length > 0) {
-      setErrores(nuevosErrores);
-      return;
-    }
-
-    try {
-      const loginData = new URLSearchParams();
-      loginData.append("username", formData.username);
-      loginData.append("password", formData.password);
-
-      const response = await fetch("http://127.0.0.1:8000/login/try", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: loginData.toString(),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Login exitoso:", data);
-        localStorage.setItem("authToken", data.access_token);
-        localStorage.setItem("tokenType", data.token_type);
-        localStorage.setItem("userId", data.user_id);
-        localStorage.setItem("userName", data.user_name);
-        localStorage.setItem("userEmail", data.user_email);
-
-        setMensajeExito("¡Sesión iniciada con éxito!");
-        setShowSuccessModal(true);
-
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      } else {
-        console.error("Error en el login:", data);
-        if (data.detail) {
-          setErrores({ general: data.detail });
-        } else {
-          setErrores({
-            general: "Credenciales inválidas. Inténtelo de nuevo.",
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error de conexión o inesperado:", error);
-      setErrores({
-        general:
-          "No se pudo conectar con el servidor. Verifique que el backend esté funcionando.",
-      });
-    }
+    await login(formData.username, formData.password);
   };
 
   return (
@@ -102,13 +43,13 @@ function Login() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-200 text-sm font-bold mb-2"
               htmlFor="username"
             >
               Email:
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
               id="username"
               type="email"
               name="username"
@@ -122,13 +63,13 @@ function Login() {
           </div>
           <div>
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-200 text-sm font-bold mb-2"
               htmlFor="password"
             >
               Contraseña:
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
               name="password"

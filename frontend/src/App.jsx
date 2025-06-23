@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Home from "./components/Home";
+import { AuthProvider } from "./context/AuthContext";
 
 function HistorialTurnosWrapper() {
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
@@ -65,16 +66,18 @@ function HistorialTurnosWrapper() {
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
-        <Route
-          path="/perfilUsuarios"
-          element={<PerfilUsuarios abierto={false} cerrar={() => {}} />}
-        />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
+          <Route
+            path="/perfilUsuarios"
+            element={<PerfilUsuarios abierto={false} cerrar={() => {}} />}
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

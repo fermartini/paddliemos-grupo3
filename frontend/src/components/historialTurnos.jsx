@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; // preparo componente para hacer fetch a el endpoint de historial
-
+import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Calendar } from "lucide-react";
 
@@ -21,18 +21,17 @@ function HistorialTurnos() {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [turnoAConfirmar, setTurnoAConfirmar] = useState(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   //
   useEffect(() => {
-    const userId = localStorage.getItem("userId"); //
-
-    if (!userId) {
+    if (!user) {
       setError("Usuario no autenticado");
       setLoading(false);
       return;
     }
 
-    fetch(`http://localhost:8000/reservations/ultimos/${userId}`)
+    fetch(`http://localhost:8000/reservations/ultimos/${user.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al cargar las reservas");
         return res.json();
@@ -51,7 +50,7 @@ function HistorialTurnos() {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [user]);
 
   //
 
