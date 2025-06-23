@@ -105,6 +105,14 @@ class CourtBase(BaseModel):
 class CourtCreate(CourtBase):
     pass
 
+class CourtUpdate(BaseModel):
+    nombre: Optional[str] = None
+    ubicación: Optional[str] = None
+    disponible: Optional[bool] = None
+    imagen: Optional[str] = None
+    type_id: Optional[int] = None
+    company_id: Optional[int] = None
+
 class CourtOut(CourtBase):
     id: int
     type: CourtTypeOut | None = None

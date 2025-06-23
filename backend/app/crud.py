@@ -65,6 +65,36 @@ def get_courts(db: Session, company_id: int = None, available_only: bool = False
         query = query.filter(models.Court.disponible == True)
     return query.all()
 
+def create_court(db: Session, court_data: dict):
+    db_court = models.Court(**court_data)
+    db.add(db_court)
+    db.commit()
+    db.refresh(db_court)
+    return db_court
+
+def update_court(db: Session, court_id: int, court_data: dict):
+    db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
+    if not db_court:
+        return None
+    
+    update_data = court_data.dict(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        setattr(db_court, field, value)
+    
+    db.commit()
+    db.refresh(db_court)
+    return db_court
+
+def delete_court(db: Session, court_id: int):
+    db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
+    if not db_court:
+        return None
+    
+    db.delete(db_court)
+    db.commit()
+    return db_court
+
 # --------------------
 # TimeSlot CRUD
 # --------------------
