@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -10,17 +9,8 @@ import './App.css';
 
 function HistorialTurnosWrapper() {
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
-=======
-import React from 'react'
-import Login from './components/Login'
-import Register from './components/Register'
-import Home from './components/Home'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './App.css'
->>>>>>> 4754d0f ([MERGE] added missing comps)
 
   return (
-<<<<<<< HEAD
     <div style={{ minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{
         position: 'absolute',
@@ -40,16 +30,6 @@ import './App.css'
       <HistorialTurnos />
     </div>
   );
-=======
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/' element={<Home />} />
-      </Routes>
-    </BrowserRouter>
-  )
->>>>>>> 4754d0f ([MERGE] added missing comps)
 }
 
 function HomePage() {

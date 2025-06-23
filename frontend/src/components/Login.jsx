@@ -1,20 +1,15 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-import React from 'react';
-=======
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
->>>>>>> 4bd8dd1 (login/register con validaciones de token)
 
 function Login() {
   const [formData, setFormData] = useState({
-    username: '', 
-    password: '', 
+    username: '',
+    password: '',
   });
 
   const [errores, setErrores] = useState({});
   const [mensajeExito, setMensajeExito] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false); 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -24,14 +19,14 @@ function Login() {
   };
 
   const handleGoBack = () => {
-  navigate('/'); 
+    navigate('/');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrores({});
     setMensajeExito('');
-    setShowSuccessModal(false); 
+    setShowSuccessModal(false);
 
     const nuevosErrores = {};
     if (!formData.username.trim()) {
@@ -67,12 +62,11 @@ function Login() {
         localStorage.setItem('tokenType', data.token_type);
 
         setMensajeExito('¡Sesión iniciada con éxito!');
-        setShowSuccessModal(true); 
+        setShowSuccessModal(true);
 
         setTimeout(() => {
-          navigate('/'); 
-        }, 2000); 
-
+          navigate('/');
+        }, 2000);
       } else {
         console.error('Error en el login:', data);
         if (data.detail) {
@@ -107,7 +101,7 @@ function Login() {
               onChange={handleChange}
               placeholder="Ingrese su email"
             />
-             {errores.username && <p className="text-red-500 text-xs italic">{errores.username}</p>}
+            {errores.username && <p className="text-red-500 text-xs italic">{errores.username}</p>}
           </div>
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
@@ -124,78 +118,21 @@ function Login() {
             />
             {errores.password && <p className="text-red-500 text-xs italic">{errores.password}</p>}
           </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
-          <button className="bg-primary hover:bg-primary-focus text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-=======
-import React from 'react'
-
-function Login () {
-  return (
-    <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-base-200'>
-      <div className='bg-base-100 shadow-md rounded-lg p-8'>
-        <h2 className='text-2xl font-semibold mb-4 text-primary'>
-          Iniciar Sesión
-        </h2>
-        <form className='space-y-4'>
-          <div>
-            <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='username'
-            >
-              Usuario:
-            </label>
-            <input
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              id='username'
-              type='text'
-              placeholder='Tu nombre de usuario'
-            />
-          </div>
-          <div>
-            <label
-              className='block text-gray-700 text-sm font-bold mb-2'
-              htmlFor='password'
-            >
-              Contraseña:
-            </label>
-            <input
-              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-              id='password'
-              type='password'
-              placeholder='Tu contraseña'
-            />
-          </div>
-          <button
-            className='bg-primary hover:bg-primary-focus text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-            type='submit'
-          >
->>>>>>> 4754d0f ([MERGE] added missing comps)
-=======
-          <button
-            className="bg-primary hover:bg-primary-focus text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-            type="submit"
-          >
->>>>>>> 4bd8dd1 (login/register con validaciones de token)
-            Entrar
-          </button>
-=======
           <div className="w-40 mx-auto flex flex-col space-y-2">
             <button
               type="submit"
-              className="btn btn-primary rounded-lg w-full text-black"  
+              className="btn btn-primary rounded-lg w-full text-black"
             >
               Ingresar
             </button>
             <button
               type="button"
               onClick={handleGoBack}
-              className="btn btn-secondary rounded-lg w-full text-black" 
+              className="btn btn-secondary rounded-lg w-full text-black"
             >
               Volver
             </button>
           </div>
->>>>>>> 20bf100 (Se agrega botón Volver para mejor navegación de los usuarios)
         </form>
       </div>
 
@@ -211,18 +148,8 @@ function Login () {
         </div>
       )}
     </div>
-<<<<<<< HEAD
   );
 }
 
-<<<<<<< HEAD
 export default Login;
-=======
-  )
-}
 
-export default Login
->>>>>>> 4754d0f ([MERGE] added missing comps)
-=======
-export default Login;
->>>>>>> 4bd8dd1 (login/register con validaciones de token)
