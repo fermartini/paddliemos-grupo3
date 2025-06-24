@@ -20,7 +20,7 @@ function Register() {
   };
 
   const handleGoBack = () => {
-  navigate('/'); 
+  navigate('/home'); 
   };
 
   const handleSubmit = async (e) => {

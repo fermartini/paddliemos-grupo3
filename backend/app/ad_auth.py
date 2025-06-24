@@ -8,14 +8,14 @@ load_dotenv()
 
 class ADAuthenticator:
     def __init__(self):
-        self.ad_server = os.getenv('AD_SERVER', '192.168.0.108')
+        self.ad_server = os.getenv('AD_SERVER', '192.168.0.14')
         self.ad_port = int(os.getenv('AD_PORT', '389'))
         self.ad_domain = os.getenv('AD_DOMAIN', 'IFTS')
         self.ad_base_dn = os.getenv('AD_BASE_DN', 'DC=IFTS,DC=local')
         self.use_ssl = os.getenv('AD_USE_SSL', 'False').lower() == 'true'
 
         self.service_user = os.getenv('AD_SERVICE_USER', 'Administrator')
-        self.service_password = os.getenv('AD_SERVICE_PASSWORD', 'TuContraseñaDeAdministrator')
+        self.service_password = os.getenv('AD_SERVICE_PASSWORD', 'IFTS.2026')
 
     def authenticate_user(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         """

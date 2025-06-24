@@ -65,7 +65,7 @@ function Login () {
         setShowSuccessModal(true)
 
         setTimeout(() => {
-          navigate('/')
+          navigate('/home')
         }, 2000)
       } else {
         console.error('Error en el login:', data)

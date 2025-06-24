@@ -5,15 +5,13 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     const html = document.documentElement
-    // setIsDark(html.getAttribute('data-theme') === 'forest')
-    setIsDark(html.getAttribute('data-theme') === 'night')
+    setIsDark(html.getAttribute('data-theme') === 'forest')
   }, [])
 
   const toggleTheme = () => {
     const html = document.documentElement
     const currentTheme = html.getAttribute('data-theme')
-    // const newTheme = currentTheme === 'forest' ? 'lemonade' : 'forest'
-    const newTheme = currentTheme === 'night' ? 'fantasy' : 'night'
+    const newTheme = currentTheme === 'forest' ? 'lemonade' : 'forest'
     html.setAttribute('data-theme', newTheme)
     setIsDark(!isDark)
   }
