@@ -17,12 +17,12 @@ async def get_current_user(token: str = Security(oauth2_scheme), db: Session = D
     )
     try:
         payload = auth.decode_access_token(token)
-        
+
         email: str = payload.get("sub")
-        
+
         if email is None:
             raise credentials_exception
-        
+
         token_data = schemas.TokenData(email=email)
 
     except JWTError as e:
@@ -48,14 +48,14 @@ def get_user_by_email(
         raise HTTPException(status_code=404, detail="Usuario no encontrado por email")
     return db_user
 
-@router.get("/user_name", response_model=schemas.UserNombreResponse) 
+@router.get("/user_name", response_model=schemas.UserNombreResponse)
 async def read_current_user_name(current_user: models.User = Depends(get_current_user)):
     if not hasattr(current_user, 'nombre'):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="El modelo de usuario no tiene el atributo 'nombre'."
         )
-    return {"nombre": current_user.nombre} 
+    return {"nombre": current_user.nombre}
 
 @router.get("/{user_id}", response_model=schemas.UserOut)
 def get_user_by_id(
@@ -82,11 +82,11 @@ def register(
     return new_user
 
 @router.post("/try", response_model=schemas.Token)
-async def login( 
+async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    db_user = crud.get_user_by_email(db, email=form_data.username) 
+    db_user = crud.get_user_by_email(db, email=form_data.username)
 
     if not db_user:
         raise HTTPException(
@@ -95,7 +95,7 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    if not auth.verify_password(form_data.password, db_user.contraseña): 
+    if not auth.verify_password(form_data.password, db_user.contraseña):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciales inválidas",
@@ -127,9 +127,9 @@ async def delete_user_by_id(
 @router.put("/users/{user_id}", response_model=schemas.UserOut)
 async def update_user_profile(
     user_id: int,
-    user_update: schemas.UserUpdate, 
+    user_update: schemas.UserUpdate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user) 
+    current_user: models.User = Depends(get_current_user)
 ):
     if current_user.id != user_id:
         raise HTTPException(
