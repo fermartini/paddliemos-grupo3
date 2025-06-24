@@ -10,4 +10,7 @@ passlib
 httpx
 pytest
 python-multipart
+bcrypt
 python-jose[cryptography]==3.3.0
+ldap3
+bcrypt

@@ -49,6 +49,48 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
         db.refresh(db_user)
     return db_user
 
+def create_user_from_ad(db: Session, ad_user: dict):
+    import secrets
+    random_password = secrets.token_urlsafe(32)
+    hashed_password = auth.get_password_hash(random_password)
+
+    # Generar email si no viene de AD
+    email = ad_user.get('email')
+    if not email or email.lower() == 'none':
+        nombre = ad_user.get('first_name', '').strip().lower().replace(' ', '')
+        apellido = ad_user.get('last_name', '').strip().lower().replace(' ', '')
+        if nombre and apellido:
+            email = f"{nombre}{apellido}@mail.com"
+        else:
+            email = f"{ad_user.get('username', '').lower()}@mail.com"
+
+    # Generar nombre completo para mostrar
+    display_name = ad_user.get('display_name')
+    if not display_name or display_name.lower() == 'none':
+        first = ad_user.get('first_name', '').strip()
+        last = ad_user.get('last_name', '').strip()
+        if first and last:
+            display_name = f"{first} {last}"
+        elif first:
+            display_name = first
+        elif last:
+            display_name = last
+        else:
+            display_name = ad_user.get('username', '')
+
+    db_user = models.User(
+        nombre=display_name,
+        email=email,
+        contraseña=hashed_password,
+        role_id=2,
+        company_id=1  # Por defecto, company_id=1
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    print(f"✅ Usuario creado desde AD: {db_user.nombre} ({db_user.email})")
+    return db_user
+
 # --------------------
 # Court CRUD
 # --------------------
