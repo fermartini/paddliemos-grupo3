@@ -30,7 +30,7 @@ function Login () {
 
     const nuevosErrores = {}
     if (!formData.username.trim()) {
-      nuevosErrores.username = 'El email es requerido.'
+      nuevosErrores.username = 'El usuario es requerido.'
     }
     if (!formData.password.trim()) {
       nuevosErrores.password = 'La contraseña es requerida.'
@@ -90,6 +90,25 @@ function Login () {
         <h2 className='text-2xl font-semibold mb-4 text-primary'>
           Iniciar Sesión
         </h2>
+
+        {/* Información sobre AD */}
+        <div className='alert alert-info mb-4'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            className='stroke-current shrink-0 w-6 h-6'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+              d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+            ></path>
+          </svg>
+          <span>Use sus credenciales de Active Directory o cuenta local</span>
+        </div>
+
         {errores.general && (
           <div className='alert alert-error mb-4'>{errores.general}</div>
         )}
@@ -100,16 +119,16 @@ function Login () {
               className='block text-gray-700 text-sm font-bold mb-2'
               htmlFor='username'
             >
-              Email:
+              Usuario:
             </label>
             <input
               className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
               id='username'
-              type='email'
+              type='text'
               name='username'
               value={formData.username}
               onChange={handleChange}
-              placeholder='Ingrese su email'
+              placeholder='Ingrese su usuario (ej: Pedro.Gonzalez)'
             />
             {errores.username && (
               <p className='text-red-500 text-xs italic'>{errores.username}</p>

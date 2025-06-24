@@ -18,18 +18,28 @@ def test_ad_connection():
     if authenticator.test_connection():
         print("✅ Basic connection successful!")
 
-        # Test authentication (replace with real credentials)
-        test_username = "testuser"  # Replace with actual AD username
-        test_password = "testpass"  # Replace with actual AD password
+        # Get credentials from user
+        print("\n=== Authentication Test ===")
+        print("Please enter credentials for an existing AD user:")
 
-        print(f"\nTesting authentication for user: {test_username}")
-        user_info = authenticator.authenticate_user(test_username, test_password)
+        username = input("Username (without domain): ").strip()
+        password = input("Password: ").strip()
 
-        if user_info:
-            print("✅ Authentication successful!")
-            print(f"User info: {user_info}")
+        if username and password:
+            print(f"\nTesting authentication for user: {username}")
+            user_info = authenticator.authenticate_user(username, password)
+
+            if user_info:
+                print("✅ Authentication successful!")
+                print(f"User info: {user_info}")
+            else:
+                print("❌ Authentication failed")
+                print("\nPossible issues:")
+                print("1. Username or password is incorrect")
+                print("2. User account is locked or disabled")
+                print("3. User doesn't exist in AD")
         else:
-            print("❌ Authentication failed")
+            print("❌ No credentials provided")
     else:
         print("❌ Connection failed")
 

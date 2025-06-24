@@ -5,9 +5,13 @@ from jose import JWTError
 import datetime
 from .. import crud, schemas, auth, models
 from ..database import get_db
+from ..ad_auth import ADAuthenticator
 
 router = APIRouter(prefix="/login", tags=["login"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/try")
+
+# Crear instancia del autenticador AD
+ad_authenticator = ADAuthenticator()
 
 async def get_current_user(token: str = Security(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -86,6 +90,35 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
+    print(f"🔐 Intentando login para usuario: {form_data.username}")
+    
+    # PRIMERO: Intentar autenticación con Active Directory
+    print("🔄 Verificando credenciales en Active Directory...")
+    ad_user = ad_authenticator.authenticate_user(form_data.username, form_data.password)
+    
+    if ad_user:
+        print("✅ Autenticación AD exitosa!")
+        print(f"Usuario AD: {ad_user}")
+        
+        # Verificar si el usuario existe en la base de datos local
+        db_user = crud.get_user_by_email(db, email=ad_user['email'])
+        
+        if not db_user:
+            print("📝 Usuario no existe en BD local, creando...")
+            # Crear usuario local desde datos de AD
+            db_user = crud.create_user_from_ad(db, ad_user)
+            print(f"✅ Usuario creado: {db_user.nombre}")
+        else:
+            print(f"✅ Usuario encontrado en BD local: {db_user.nombre}")
+        
+        # Generar token de acceso
+        access_token = auth.create_access_token(data={"sub": db_user.email})
+        print("🎫 Token generado exitosamente")
+        
+        return {"access_token": access_token, "token_type": "bearer"}
+    
+    # SEGUNDO: Si AD falla, intentar base de datos local
+    print("❌ Autenticación AD falló, intentando BD local...")
     db_user = crud.get_user_by_email(db, email=form_data.username)
 
     if not db_user:
@@ -102,6 +135,7 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    print("✅ Autenticación BD local exitosa!")
     access_token = auth.create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
