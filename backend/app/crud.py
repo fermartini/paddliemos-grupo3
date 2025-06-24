@@ -78,6 +78,13 @@ def create_user_from_ad(db: Session, ad_user: dict):
         else:
             display_name = ad_user.get('username', '')
 
+    # Check if user already exists before creating
+    existing_user = get_user_by_email(db, email)
+    if existing_user:
+        print(f"✅ Usuario ya existe en BD local: {existing_user.nombre}")
+        return existing_user
+
+    # Create new user only if doesn't exist
     db_user = models.User(
         nombre=display_name,
         email=email,

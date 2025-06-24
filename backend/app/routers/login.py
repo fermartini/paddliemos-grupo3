@@ -100,18 +100,18 @@ async def login(
         print("✅ Autenticación AD exitosa!")
         print(f"Usuario AD: {ad_user}")
         
-        # Verificar si el usuario existe en la base de datos local
+        # 1. Check if user exists in local DB
         db_user = crud.get_user_by_email(db, email=ad_user['email'])
         
-        if not db_user:
-            print("📝 Usuario no existe en BD local, creando...")
-            # Crear usuario local desde datos de AD
+        if db_user:
+            # 2. If exists, log in
+            print(f"✅ Usuario encontrado en BD local: {db_user.nombre}")
+        else:
+            # 3. If not, create and then log in
             db_user = crud.create_user_from_ad(db, ad_user)
             print(f"✅ Usuario creado: {db_user.nombre}")
-        else:
-            print(f"✅ Usuario encontrado en BD local: {db_user.nombre}")
         
-        # Generar token de acceso
+        # 4. Generate token for the user (new or existing)
         access_token = auth.create_access_token(data={"sub": db_user.email})
         print("🎫 Token generado exitosamente")
         
