@@ -131,7 +131,6 @@ export const AuthProvider = ({ children }) => {
       successMessage: "",
       showSuccessModal: false,
     });
-    navigate("/login");
   };
 
   // Función para actualizar errores

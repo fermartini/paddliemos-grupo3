@@ -28,6 +28,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(formData.username, formData.password);
+    setShowSuccessModal(true);
   };
 
   return (
