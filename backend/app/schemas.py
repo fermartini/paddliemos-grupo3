@@ -60,7 +60,9 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
+    user_id: int
+    user_name: str
+    user_email: str
     class Config:
         from_attributes = True 
 
@@ -102,6 +104,14 @@ class CourtBase(BaseModel):
 
 class CourtCreate(CourtBase):
     pass
+
+class CourtUpdate(BaseModel):
+    nombre: Optional[str] = None
+    ubicación: Optional[str] = None
+    disponible: Optional[bool] = None
+    imagen: Optional[str] = None
+    type_id: Optional[int] = None
+    company_id: Optional[int] = None
 
 class CourtOut(CourtBase):
     id: int
@@ -169,6 +179,19 @@ class ReservationOut(ReservationBase):
     court: CourtOut | None = None
     time_slot: TimeSlotOut | None = None
     status: ReservationStatusOut | None = None
+
+    class Config:
+        orm_mode = True
+
+# --------------------
+# Turno 
+# --------------------
+class TurnoOut(BaseModel):
+    id: int
+    usuario_id: int
+    fecha: date
+    descripcion: str | None = None
+    estado: str = "pendiente"  # Default state
 
     class Config:
         orm_mode = True
