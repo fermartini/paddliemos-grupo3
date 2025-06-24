@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from datetime import date
 from . import models, schemas, auth
+from typing import Optional
 # --------------------
 # CRUD de Usuarios
 # --------------------
@@ -18,7 +19,7 @@ def get_user_by_name(db: Session, name: str):
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = auth.get_password_hash(user.contraseña)
 
-    db_user = models.User(
+    db_user = models.User(        
         nombre=user.nombre,
         email=user.email,
         contraseña=hashed_password,
@@ -103,7 +104,6 @@ def create_user_from_ad(db: Session, ad_user: dict):
 # --------------------
 def get_court(db: Session, court_id: int):
     return db.query(models.Court).filter(models.Court.id == court_id).first()
-
 def get_courts(db: Session, company_id: int = None, available_only: bool = False):
     query = db.query(models.Court)
     if company_id:
@@ -111,6 +111,36 @@ def get_courts(db: Session, company_id: int = None, available_only: bool = False
     if available_only:
         query = query.filter(models.Court.disponible == True)
     return query.all()
+
+def create_court(db: Session, court_data: dict):
+    db_court = models.Court(**court_data)
+    db.add(db_court)
+    db.commit()
+    db.refresh(db_court)
+    return db_court
+
+def update_court(db: Session, court_id: int, court_data: dict):
+    db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
+    if not db_court:
+        return None
+    
+    update_data = court_data.dict(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        setattr(db_court, field, value)
+    
+    db.commit()
+    db.refresh(db_court)
+    return db_court
+
+def delete_court(db: Session, court_id: int):
+    db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
+    if not db_court:
+        return None
+    
+    db.delete(db_court)
+    db.commit()
+    return db_court
 
 # --------------------
 # TimeSlot CRUD
@@ -128,7 +158,6 @@ def get_time_slots(db: Session):
 
 def get_reservation(db: Session, reservation_id: int):
     return db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
-
 def get_reservations(db: Session, user_id: int = None, court_id: int = None, fecha: date = None):
     query = db.query(models.Reservation)
     if user_id:
@@ -185,3 +214,14 @@ def get_available_time_slots(db: Session, court_id: int, fecha: date):
     except Exception as e:
         print(f"Error in get_available_time_slots: {str(e)}")
         raise
+
+
+# Historial ultimos 3 partidos  
+
+def get_last_3_matches(db: Session, user_id: int):
+    return db.query(models.Reservation)\
+        .filter(models.Reservation.user_id == user_id)\
+        .order_by(models.Reservation.fecha.desc(), models.Reservation.time_slot_id.desc())\
+        .limit(3)\
+        .all()
+
