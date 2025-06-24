@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext.jsx'
 
 function Login () {
   const [formData, setFormData] = useState({
@@ -8,10 +9,8 @@ function Login () {
   })
 
   const [errores, setErrores] = useState({})
-  const [mensajeExito, setMensajeExito] = useState('')
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
-
   const navigate = useNavigate()
+  const { login, errors, loading, successMessage, showSuccessModal } = useAuth()
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -25,8 +24,6 @@ function Login () {
   const handleSubmit = async e => {
     e.preventDefault()
     setErrores({})
-    setMensajeExito('')
-    setShowSuccessModal(false)
 
     const nuevosErrores = {}
     if (!formData.username.trim()) {
@@ -42,41 +39,13 @@ function Login () {
     }
 
     try {
-      const loginData = new URLSearchParams()
-      loginData.append('username', formData.username)
-      loginData.append('password', formData.password)
-
-      const response = await fetch('http://127.0.0.1:8000/login/try', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: loginData.toString()
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        console.log('Login exitoso:', data)
-        localStorage.setItem('authToken', data.access_token)
-        localStorage.setItem('tokenType', data.token_type)
-
-        setMensajeExito('¡Sesión iniciada con éxito!')
-        setShowSuccessModal(true)
-
-        setTimeout(() => {
-          navigate('/')
-        }, 2000)
-      } else {
-        console.error('Error en el login:', data)
-        if (data.detail) {
-          setErrores({ general: data.detail })
-        } else {
-          setErrores({ general: 'Credenciales inválidas. Inténtelo de nuevo.' })
-        }
-      }
+      await login(
+        formData.username,
+        formData.password,
+        '¡Sesión iniciada con éxito!'
+      )
     } catch (error) {
-      console.error('Error de conexión o inesperado:', error)
+      console.error('Error en el login:', error)
       setErrores({
         general:
           'No se pudo conectar con el servidor. Verifique que el backend esté funcionando.'
@@ -109,8 +78,10 @@ function Login () {
           <span>Use sus credenciales de Active Directory o cuenta local</span>
         </div>
 
-        {errores.general && (
-          <div className='alert alert-error mb-4'>{errores.general}</div>
+        {(errores.general || errors.general) && (
+          <div className='alert alert-error mb-4'>
+            {errores.general || errors.general}
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className='space-y-4'>
@@ -158,8 +129,9 @@ function Login () {
             <button
               type='submit'
               className='btn btn-primary rounded-lg w-full text-black'
+              disabled={loading}
             >
-              Ingresar
+              {loading ? 'Ingresando...' : 'Ingresar'}
             </button>
             <button
               type='button'
@@ -176,7 +148,7 @@ function Login () {
         <div className='modal modal-open backdrop-blur-sm'>
           <div className='modal-box'>
             <h3 className='font-bold text-lg text-success'>¡Éxito!</h3>
-            <p className='py-2'>{mensajeExito}</p>
+            <p className='py-2'>{successMessage}</p>
             <p className='py-2'>
               Aguarde unos instantes, será redirigido a la página principal.
             </p>

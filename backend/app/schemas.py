@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from datetime import date, time
+from datetime import date, time, datetime
 from typing import Optional
 
 # --------------------
@@ -16,7 +16,7 @@ class CompanyOut(CompanyBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --------------------
 # Role
@@ -31,7 +31,7 @@ class RoleOut(RoleBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --------------------
 # User
@@ -63,6 +63,7 @@ class Token(BaseModel):
     user_id: int
     user_name: str
     user_email: str
+
     class Config:
         from_attributes = True 
 
@@ -89,7 +90,7 @@ class CourtTypeOut(CourtTypeBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --------------------
 # Court
@@ -119,7 +120,7 @@ class CourtOut(CourtBase):
     company: CompanyOut | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --------------------
 # TimeSlot
@@ -158,7 +159,7 @@ class ReservationStatusOut(ReservationStatusBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --------------------
 # Reservation
@@ -181,17 +182,17 @@ class ReservationOut(ReservationBase):
     status: ReservationStatusOut | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --------------------
-# Turno 
+# Turno
 # --------------------
 class TurnoOut(BaseModel):
     id: int
     usuario_id: int
-    fecha: date
+    fecha: datetime
     descripcion: str | None = None
-    estado: str = "pendiente"  # Default state
+    estado: str = "pendiente"
 
     class Config:
-        orm_mode = True
+        from_attributes = True
