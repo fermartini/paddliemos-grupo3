@@ -111,11 +111,11 @@ async def delete_user_by_id(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    if current_user.id != user_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para eliminar este usuario."
-        )
+    # if current_user.id != user_id:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="No tienes permiso para eliminar este usuario."
+    #     )
 
     db_user = crud.get_user(db, user_id=user_id)
     if not db_user:
@@ -131,11 +131,11 @@ async def update_user_profile(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user) 
 ):
-    if current_user.id != user_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para modificar este perfil."
-        )
+    # if current_user.id != user_id:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="No tienes permiso para modificar este perfil."
+    #     )
 
     updated_user = crud.update_user(db, user_id=user_id, user_update=user_update)
 
