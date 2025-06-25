@@ -4,6 +4,7 @@ import BookingWizard from "./BookingWizard";
 import ThemeToggle from "./ThemeToggle";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import ProfileUser from "./ProfileUser.jsx"; // Importar ProfileUser
 
 function Home() {
   const navigate = useNavigate();
@@ -11,6 +12,10 @@ function Home() {
   const [logoutMessage, setLogoutMessage] = useState("");
   const { user, logout } = useAuth();
   const userName = user?.name || user?.email?.split("@")[0] || "Invitado";
+
+
+  // Estado para controlar visibilidad del modal "Mi Perfil"
+  const [showProfileUserModal, setShowProfileUserModal] = useState(false);
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -32,6 +37,12 @@ function Home() {
     }, 2000);
   };
 
+   // Función para abrir modal "Mi Perfil"
+  const handleProfileClick = () => {
+    setShowProfileUserModal(true);
+  };
+
+
   return (
     <BookingProvider>
       <header className="bg-base-100 shadow-md py-4 flex flex-col md:flex-row  mx-10 justyfy-center gap-10 ">
@@ -48,10 +59,30 @@ function Home() {
         </div>
         {user ? (
           <div>
-            <div className="flex space-x-2 gap-8 align-end ">
+            <div className="flex items-center justify-center space-x-2" style={{ minWidth: "400px" }}>
               <span className="text-lg font-semibold text-gray-500 md:text-nowrap">
                 ¡Bienvenido, {userName}!
               </span>
+
+              {/* Botón "Mi Perfil" */}
+            <button
+              className="btn btn-sm"
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #12820e",
+                color: "#12820e",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+
+              onClick={handleProfileClick}
+            >
+              Mi Perfil
+            </button>
+
+
               <button
                 className="btn btn-sm  bg-amber-800"
                 onClick={handleLogoutClick}
@@ -141,6 +172,13 @@ function Home() {
           </div>
         </div>
       )}
+
+      {/*Modal "Mi Perfil" */}
+      <ProfileUser
+        abierto={showProfileUserModal}
+        cerrar={() => setShowProfileUserModal(false)}
+      />
+
     </BookingProvider>
   );
 }
