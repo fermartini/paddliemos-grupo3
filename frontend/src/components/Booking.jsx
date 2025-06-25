@@ -153,7 +153,7 @@ function Booking() {
   };
 
   const formatearFecha = (fechaISO) => {
-    return new Date(fechaISO).toLocaleDateString("es-AR", {
+    return new Date(fechaISO + "T00:00:00").toLocaleDateString("es-AR", {
       year: "numeric",
       month: "long",
       day: "numeric",
