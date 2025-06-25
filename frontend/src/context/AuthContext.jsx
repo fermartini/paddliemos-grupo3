@@ -111,6 +111,8 @@ export const AuthProvider = ({ children }) => {
       }));
 
       setTimeout(() => navigate("/"), 2000);
+
+      return true;
     } catch (error) {
       localStorage.removeItem("paddliemos_session");
       setAuthState((prev) => ({
@@ -118,6 +120,7 @@ export const AuthProvider = ({ children }) => {
         errors: { general: error.message },
         loading: false,
       }));
+      return false;
     }
   };
   // Función para cerrar sesión

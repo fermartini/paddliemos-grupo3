@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Calendar, Trash2 } from "lucide-react";
 
-
 function Booking() {
   const [turnos, setTurnos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,12 +31,10 @@ function Booking() {
         hoy.setHours(0, 0, 0, 0);
 
         const turnosFormateados = data.map((turno) => {
-          let estadoActual = turno.status?.nombre || "Desconocido";
+          let estadoActual = turno.status_id || -1;
           const fechaTurno = new Date(turno.fecha);
           fechaTurno.setHours(0, 0, 0, 0);
-
-
-          if (estadoActual !== "Cancelado") {
+          if (estadoActual !== 3) {
             if (fechaTurno < hoy) {
               estadoActual = "Completado";
             } else if (fechaTurno.getTime() === hoy.getTime()) {
@@ -45,6 +42,8 @@ function Booking() {
             } else {
               estadoActual = "Agendado";
             }
+          } else {
+            estadoActual = "Cancelado";
           }
 
           return {
@@ -55,7 +54,6 @@ function Booking() {
             court_id: turno.court_id,
             time_slot_id: turno.time_slot_id,
             estado: estadoActual,
-
           };
         });
         setTurnos(turnosFormateados);
@@ -68,7 +66,14 @@ function Booking() {
   }, [user]);
 
   const handleAbrirConfirmacion = (turno) => {
-    setTurnoAConfirmar(turno);
+    setTurnoAConfirmar({
+      court_id: turno.court_id,
+      estado: turno.estado,
+      fecha: turno.fecha,
+      hora: turno.hora,
+      id: turno.id,
+      time_slot_id: turno.time_slot_id,
+    });
     setMostrarConfirmacion(true);
   };
 
@@ -77,7 +82,7 @@ function Booking() {
     setMostrarConfirmacion(false);
   };
 
-  const handleConfirmarCancelacion = () => {
+  const handleConfirmarCancelacion = (turno) => {
     if (!user || !user.token) {
       console.error("Usuario no autenticado o token no disponible.");
       alert("Debes iniciar sesión para cancelar un turno.");
@@ -86,29 +91,38 @@ function Booking() {
     }
 
     if (turnoAConfirmar) {
-      fetch(`http://localhost:8000/reservations/reservation/${turnoAConfirmar.id}`, {
-        method: 'PUT',
+      fetch(`http://localhost:8000/reservations/reservation/${turno.id}`, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}` // Envía el token
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`, // Envía el token
         },
         body: JSON.stringify({
           // ¡¡¡CORRECCIÓN CLAVE AQUÍ!!!
           // Incluye todos los campos que el backend está esperando
           status_id: 3, // Envía el ID 3 para "Cancelado"
           user_id: user.id, // El ID del usuario actual
-          court_id: turnoAConfirmar.court_id, // El ID de la cancha de la reserva
-          fecha: turnoAConfirmar.fecha, // La fecha original de la reserva
-          time_slot_id: turnoAConfirmar.time_slot_id // El ID del slot de tiempo de la reserva
-        })
+          court_id: turno.court_id, // El ID de la cancha de la reserva
+          fecha: turno.fecha, // La fecha original de la reserva
+          time_slot_id: turno.time_slot_id, // El ID del slot de tiempo de la reserva
+        }),
       })
-        .then(res => {
+        .then((res) => {
           if (!res.ok) {
-            return res.json().then(errorData => {
-              throw new Error(errorData.detail || errorData.message || 'Error desconocido al cancelar el turno.');
-            }).catch(() => {
-              throw new Error('Error al cancelar el turno. Estado HTTP: ' + res.status);
-            });
+            return res
+              .json()
+              .then((errorData) => {
+                throw new Error(
+                  errorData.detail ||
+                    errorData.message ||
+                    "Error desconocido al cancelar el turno."
+                );
+              })
+              .catch(() => {
+                throw new Error(
+                  "Error al cancelar el turno. Estado HTTP: " + res.status
+                );
+              });
           }
           return res.json();
         })
@@ -126,9 +140,13 @@ function Booking() {
           setMostrarConfirmacion(false);
           alert("¡Turno cancelado exitosamente!");
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error en la cancelación:", err);
-          alert(`Hubo un error al intentar cancelar el turno: ${err.message || "Por favor, inténtalo de nuevo."}`);
+          alert(
+            `Hubo un error al intentar cancelar el turno: ${
+              err.message || "Por favor, inténtalo de nuevo."
+            }`
+          );
           setMostrarConfirmacion(false);
         });
     }
@@ -152,8 +170,6 @@ function Booking() {
 
   return (
     <div className="bg-base-100 shadow-md rounded-xl p-6 mb-10 relative">
-
-
       <div className="max-w-xl mx-auto mt-20 shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-bold text-center text-primary mb-4">
           Mis Últimos Turnos
@@ -194,14 +210,15 @@ function Booking() {
                 <div className="flex flex-col items-end">
                   <span className="text-xs text-base-content mb-1"></span>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${turno.estado === "Cancelado"
-                      ? "bg-error text-error-content"
-                      : turno.estado === "Completado"
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      turno.estado === "Cancelado"
+                        ? "bg-error text-error-content"
+                        : turno.estado === "Completado"
                         ? "bg-success text-success-content"
                         : turno.estado === "Hoy"
-                          ? "bg-warning text-warning-content"
-                          : "bg-primary text-primary-content"
-                      }`}
+                        ? "bg-warning text-warning-content"
+                        : "bg-primary text-primary-content"
+                    }`}
                   >
                     {turno.estado}
                   </span>
@@ -260,7 +277,7 @@ function Booking() {
                   No, mantener turno
                 </button>
                 <button
-                  onClick={handleConfirmarCancelacion}
+                  onClick={() => handleConfirmarCancelacion(turnoAConfirmar)}
                   className="flex-1 px-4 py-2 text-white rounded-lg transition-colors bg-red-600 hover:bg-red-700"
                 >
                   Sí, cancelar turno

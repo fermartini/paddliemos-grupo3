@@ -27,8 +27,15 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData.username, formData.password);
-    setShowSuccessModal(true);
+    const success = await login(formData.username, formData.password);
+    if (success) {
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowLogoutModal(false);
+      }, 2000);
+    } else {
+      setShowSuccessModal(false);
+    }
   };
 
   return (
