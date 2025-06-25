@@ -1,49 +1,43 @@
-import React, { useState } from "react";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import HistorialTurnos from "./components/historialTurnos";
-import PerfilUsuarios from "./components/PerfilUsuarios";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useNavigate,
-  Link,
-} from "react-router-dom";
-import "./App.css";
-import Home from "./components/Home";
-import { AuthProvider } from "./context/AuthContext";
+import React, { useState } from 'react'
+import Login from './components/Login'
+import Register from './components/Register'
+import HistorialTurnos from './components/BookingHistory'
+import PerfilUsuarios from './components/UserProfile'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import './App.css'
+import Home from './components/Home'
+import { AuthProvider } from './context/AuthContext'
 
-function HistorialTurnosWrapper() {
-  const [mostrarPerfil, setMostrarPerfil] = useState(false);
+function HistorialTurnosWrapper () {
+  const [mostrarPerfil, setMostrarPerfil] = useState(false)
 
   return (
     <div
       style={{
-        minHeight: "100vh",
-        fontFamily: "system-ui, -apple-system, sans-serif",
+        minHeight: '100vh',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
       }}
     >
       <div
         style={{
-          position: "absolute",
-          top: "16px",
-          right: "16px",
-          display: "flex",
-          gap: "8px",
-          zIndex: 10,
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          display: 'flex',
+          gap: '8px',
+          zIndex: 10
         }}
       >
         <button
           onClick={() => setMostrarPerfil(true)}
           style={{
-            padding: "8px 16px",
-            border: "1px solid #12820e",
-            color: "#12820e",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "500",
+            padding: '8px 16px',
+            border: '1px solid #12820e',
+            color: '#12820e',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500'
           }}
         >
           Mi Perfil
@@ -55,31 +49,31 @@ function HistorialTurnosWrapper() {
         cerrar={() => setMostrarPerfil(false)}
       />
       <HistorialTurnos />
-      <Link to="/" className="btn btn-sm btn-primary absolute top-4 left-4">
-        {" "}
+      <Link to='/' className='btn btn-sm btn-primary absolute top-4 left-4'>
+        {' '}
         VOLVER
       </Link>
     </div>
-  );
+  )
 }
 
-function App() {
+function App () {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/historialTurnos' element={<HistorialTurnosWrapper />} />
           <Route
-            path="/perfilUsuarios"
+            path='/perfilUsuarios'
             element={<PerfilUsuarios abierto={false} cerrar={() => {}} />}
           />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

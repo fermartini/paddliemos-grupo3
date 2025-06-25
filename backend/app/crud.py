@@ -19,7 +19,7 @@ def get_user_by_name(db: Session, name: str):
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = auth.get_password_hash(user.contraseña)
 
-    db_user = models.User(        
+    db_user = models.User(
         nombre=user.nombre,
         email=user.email,
         contraseña=hashed_password,
@@ -42,7 +42,7 @@ def delete_user(db: Session, user_id: int):
 def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user:
-        update_data = user_update.model_dump(exclude_unset=True) 
+        update_data = user_update.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(db_user, key, value)
         db.add(db_user)
@@ -76,12 +76,12 @@ def update_court(db: Session, court_id: int, court_data: dict):
     db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
     if not db_court:
         return None
-    
+
     update_data = court_data.dict(exclude_unset=True)
-    
+
     for field, value in update_data.items():
         setattr(db_court, field, value)
-    
+
     db.commit()
     db.refresh(db_court)
     return db_court
@@ -90,7 +90,7 @@ def delete_court(db: Session, court_id: int):
     db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
     if not db_court:
         return None
-    
+
     db.delete(db_court)
     db.commit()
     return db_court
@@ -111,6 +111,7 @@ def get_time_slots(db: Session):
 
 def get_reservation(db: Session, reservation_id: int):
     return db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
+
 def get_reservations(db: Session, user_id: int = None, court_id: int = None, fecha: date = None):
     query = db.query(models.Reservation)
     if user_id:
@@ -143,7 +144,7 @@ def create_reservation(db: Session, reservation: schemas.ReservationCreate):
 def get_available_time_slots(db: Session, court_id: int, fecha: date):
     try:
         all_slots = get_time_slots(db)
-        
+
         booked_reservations = db.query(models.Reservation).filter(
             and_(
                 models.Reservation.court_id == court_id,
@@ -160,7 +161,7 @@ def get_available_time_slots(db: Session, court_id: int, fecha: date):
                 "hora_inicio": slot.hora_inicio,
                 "hora_fin": slot.hora_fin,
                 "activo": slot.activo,
-                "available": bool(slot.id not in booked_slot_ids)  
+                "available": bool(slot.id not in booked_slot_ids)
             }
             for slot in all_slots
         ]
@@ -169,7 +170,7 @@ def get_available_time_slots(db: Session, court_id: int, fecha: date):
         raise
 
 
-# Historial ultimos 3 partidos  
+# Historial ultimos 3 partidos
 
 def get_last_3_matches(db: Session, user_id: int):
     return db.query(models.Reservation)\

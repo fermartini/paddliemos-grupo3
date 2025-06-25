@@ -108,11 +108,11 @@ def update_court(
                     status_code=400,
                     detail="Invalid company ID"
                 )
-        
+
         # Actualizar la cancha
         updated_court = crud.update_court(db, court_id=court_id, court_data=court_data)
         return updated_court
-        
+
     except Exception as e:
         db.rollback()
         raise HTTPException(
@@ -129,7 +129,7 @@ def delete_court(court_id: int, db: Session = Depends(get_db)):
             status_code=404,
             detail="Court not found"
         )
-    
+
     # Verificar reservas directamente
     has_reservations = db.query(models.Reservation)\
                        .filter(models.Reservation.court_id == court_id)\
