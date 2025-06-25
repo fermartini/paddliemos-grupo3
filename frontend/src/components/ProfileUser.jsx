@@ -4,21 +4,17 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function ProfileUser({ abierto, cerrar }) {
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
-
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(user?.name || "");
 
-
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
-
   const [logoutMessage, setLogoutMessage] = useState("");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
 
   useEffect(() => {
     if (user?.name) {
@@ -27,7 +23,6 @@ function ProfileUser({ abierto, cerrar }) {
   }, [user]);
 
   if (!abierto) return null;
-
 
   const handleLogoutClick = () => {
     logout();
@@ -45,23 +40,27 @@ function ProfileUser({ abierto, cerrar }) {
 
   const handleSaveName = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/users/${user.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        },
-        body: JSON.stringify({ name: editedName })
-      });
+      const response = await fetch(
+        `http://localhost:8000/login/users/${user.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({ nombre: editedName }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al actualizar el nombre.');
+        throw new Error(errorData.message || "Error al actualizar el nombre.");
       }
 
       alert("Nombre actualizado con éxito!");
       setIsEditingName(false);
-
+      setUser({ name: editedName });
+      localStorage.setItem("userName", editedName);
     } catch (error) {
       console.error("Error al guardar el nombre:", error);
       alert(`Error al actualizar el nombre: ${error.message}`);
@@ -80,16 +79,21 @@ function ProfileUser({ abierto, cerrar }) {
   const handleConfirmDeleteAccount = async () => {
     setIsDeletingAccount(true);
     try {
-      const response = await fetch(`http://localhost:8000/users/${user.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${user.token}`
+      const response = await fetch(
+        `http://localhost:8000/login/users/${user.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error desconocido al eliminar la cuenta.');
+        throw new Error(
+          errorData.message || "Error desconocido al eliminar la cuenta."
+        );
       }
 
       alert("¡Tu cuenta ha sido eliminada exitosamente!");
@@ -135,7 +139,6 @@ function ProfileUser({ abierto, cerrar }) {
           </div>
 
           <div className="space-y-5 mb-8">
-
             <div className="flex flex-col items-center gap-4 p-3 bg-base-200 rounded-lg sm:flex-row sm:items-start">
               <User className="w-5 h-5 text-base-content shrink-0" />
               <div className="flex-grow">
@@ -182,7 +185,6 @@ function ProfileUser({ abierto, cerrar }) {
               </div>
             </div>
 
-
             <div className="flex flex-col items-center gap-4 p-3 bg-base-200 rounded-lg sm:flex-row sm:items-start">
               <Mail className="w-5 h-5 text-base-content shrink-0" />
               <div className="flex-grow">
@@ -203,7 +205,8 @@ function ProfileUser({ abierto, cerrar }) {
                 </p>
                 {proximoTurno ? (
                   <p className="font-semibold text-primary text-lg text-center sm:text-left">
-                    {formatearFechaTurno(proximoTurno.fecha)} - {proximoTurno.hora} hs
+                    {formatearFechaTurno(proximoTurno.fecha)} -{" "}
+                    {proximoTurno.hora} hs
                   </p>
                 ) : (
                   <p className="font-semibold text-base-content text-lg text-center sm:text-left">
@@ -215,7 +218,6 @@ function ProfileUser({ abierto, cerrar }) {
           </div>
 
           <div className="flex flex-col gap-4">
-
             <button
               className="btn btn-error w-full text-lg"
               onClick={handleDeleteAccountClick}
@@ -225,7 +227,6 @@ function ProfileUser({ abierto, cerrar }) {
           </div>
         </div>
       </div>
-
 
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 animate-fade-in">
@@ -262,7 +263,6 @@ function ProfileUser({ abierto, cerrar }) {
           </div>
         </div>
       )}
-
 
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 animate-fade-in">

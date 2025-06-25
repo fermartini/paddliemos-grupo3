@@ -10,7 +10,7 @@ function Home() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState("");
   const { user, logout } = useAuth();
-  const userName = user?.name || user?.email?.split("@")[0] || "Invitado";
+  const name = user?.name.charAt(0).toUpperCase() + user?.name.slice(1);
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -50,7 +50,7 @@ function Home() {
           <div>
             <div className="flex space-x-2 gap-8 align-end ">
               <span className="text-lg font-semibold text-gray-500 md:text-nowrap">
-                ¡Bienvenido, {userName}!
+                ¡Bienvenido, {name}!
               </span>
               <button
                 className="btn btn-sm  bg-amber-800"

@@ -8,7 +8,7 @@ function Login() {
     password: "",
   });
 
-  const { login } = useAuth();
+  const { login, errors } = useAuth();
 
   const [errores, setErrores] = useState({});
   const [mensajeExito, setMensajeExito] = useState("");
@@ -33,8 +33,6 @@ function Login() {
       setTimeout(() => {
         setShowLogoutModal(false);
       }, 2000);
-    } else {
-      setShowSuccessModal(false);
     }
   };
 
@@ -66,7 +64,7 @@ function Login() {
               placeholder="Ingrese su email"
             />
             {errores.username && (
-              <p className="text-red-500 text-xs italic">{errores.username}</p>
+              <p className="text-red-500 text-xs italic">{errors.username}</p>
             )}
           </div>
           <div>
@@ -86,7 +84,7 @@ function Login() {
               placeholder="Ingrese su contraseña"
             />
             {errores.password && (
-              <p className="text-red-500 text-xs italic">{errores.password}</p>
+              <p className="text-red-500 text-xs italic">{errors.password}</p>
             )}
           </div>
           <div className="w-40 mx-auto flex flex-col space-y-2">
