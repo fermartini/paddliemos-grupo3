@@ -8,16 +8,10 @@ function Login () {
     password: ''
   })
 
-  const {
-    login,
-    errors,
-    successMessage,
-    showSuccessModal,
-    setShowSuccessModal
-  } = useAuth()
+  const { login, errors } = useAuth()
 
-  /*   const [errores, setErrores] = useState({})
-  const [mensajeExito, setMensajeExito] = useState('') */
+  const [mensajeExito, setMensajeExito] = useState('')
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   const navigate = useNavigate()
 
@@ -32,8 +26,13 @@ function Login () {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    await login(formData.username, formData.password)
-    setShowSuccessModal(true)
+    const success = await login(formData.username, formData.password)
+    if (success) {
+      setShowSuccessModal(true)
+      setTimeout(() => {
+        setShowLogoutModal(false)
+      }, 2000)
+    }
   }
 
   return (

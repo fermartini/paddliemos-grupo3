@@ -10,14 +10,14 @@ function Home () {
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [logoutMessage, setLogoutMessage] = useState('')
   const { user, logout } = useAuth()
-  const userName = user?.name || user?.email?.split('@')[0] || 'Invitado'
+  const name = user?.name.charAt(0).toUpperCase() + user?.name.slice(1)
 
   const handleLoginClick = () => {
     navigate('/login')
   }
 
   const handleRegisterClick = () => {
-    navigate('/register')
+    navigate('/registro')
   }
 
   const handleLogoutClick = () => {
@@ -48,17 +48,23 @@ function Home () {
         </div>
         {user ? (
           <div>
-            <div className='flex space-x-2 gap-8 align-end '>
+            <div className='grid grid-cols-2 space-x-2 gap-6 align-end'>
               <span className='text-lg font-semibold text-gray-500 md:text-nowrap'>
-                ¡Bienvenido, {userName}!
+                ¡Bienvenido, {name}!
               </span>
+              <ThemeToggle />
+              <Link
+                to='/historialTurnos'
+                className='btn btn-sm btn-primary text-nowrap'
+              >
+                Mis Turnos Previos
+              </Link>
               <button
-                className='btn btn-sm  bg-amber-800'
+                className='btn btn-sm btn-error  '
                 onClick={handleLogoutClick}
               >
                 Cerrar Sesión
               </button>
-              <ThemeToggle />
             </div>
           </div>
         ) : (
@@ -95,9 +101,6 @@ function Home () {
           {user ? (
             <div className='flex flex-col items-center gap-10'>
               <BookingWizard />
-              <Link to='/historialTurnos' className='btn btn-sm btn-primary '>
-                Historial
-              </Link>
             </div>
           ) : (
             <div className='w-full max-w-3xl mx-auto'>

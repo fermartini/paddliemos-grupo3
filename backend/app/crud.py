@@ -169,8 +169,44 @@ def get_available_time_slots(db: Session, court_id: int, fecha: date):
         print(f"Error in get_available_time_slots: {str(e)}")
         raise
 
+def update_reservation(db: Session, reservation_id: int, reservation_update: schemas.ReservationUpdate):
 
-# Historial ultimos 3 partidos
+    db_reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
+
+    if not db_reservation:
+        return None
+
+    for field, value in reservation_update.model_dump(exclude_unset=True).items():
+        setattr(db_reservation, field, value)
+
+    try:
+        db.add(db_reservation) 
+        db.commit()
+        db.refresh(db_reservation) 
+        return db_reservation
+    except Exception as e:
+        db.rollback() 
+        print(f"Error al actualizar la reserva: {e}")
+        return None
+    
+def delete_reservation(db: Session, reservation_id: int): 
+    db_reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
+
+    if not db_reservation:
+        return None
+
+    deleted_id = db_reservation.id
+
+    try:
+        db.delete(db_reservation)
+        db.commit()
+        return deleted_id
+    except Exception as e:
+        db.rollback()
+        print(f"Error al eliminar la reserva: {e}")
+        return None
+    
+# Historial ultimos 3 partidos  
 
 def get_last_3_matches(db: Session, user_id: int):
     return db.query(models.Reservation)\

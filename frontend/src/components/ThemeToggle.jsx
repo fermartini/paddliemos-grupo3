@@ -19,7 +19,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="btn btn-ghost btn-circle transition-transform duration-300 hover:rotate-12"
+      className="btn btn-ghost btn-circle transition-transform duration-300 hover:rotate-12 mx-10"
       aria-label="Toggle theme"
     >
       {isDark ? (
