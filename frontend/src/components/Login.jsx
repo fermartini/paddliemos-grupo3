@@ -10,7 +10,6 @@ function Login() {
 
   const { login, errors } = useAuth();
 
-  const [errores, setErrores] = useState({});
   const [mensajeExito, setMensajeExito] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -42,8 +41,8 @@ function Login() {
         <h2 className="text-2xl font-semibold mb-4 text-primary">
           Iniciar Sesión
         </h2>
-        {errores.general && (
-          <div className="alert alert-error mb-4">{errores.general}</div>
+        {errors.general && (
+          <div className="alert alert-error mb-4">{errors.general}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,7 +62,7 @@ function Login() {
               onChange={handleChange}
               placeholder="Ingrese su email"
             />
-            {errores.username && (
+            {errors.username && (
               <p className="text-red-500 text-xs italic">{errors.username}</p>
             )}
           </div>
@@ -83,7 +82,7 @@ function Login() {
               onChange={handleChange}
               placeholder="Ingrese su contraseña"
             />
-            {errores.password && (
+            {errors.password && (
               <p className="text-red-500 text-xs italic">{errors.password}</p>
             )}
           </div>

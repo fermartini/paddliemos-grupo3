@@ -172,7 +172,7 @@ function Booking() {
     <div className="bg-base-100 shadow-md rounded-xl p-6 mb-10 relative">
       <div className="max-w-xl mx-auto mt-20 shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-bold text-center text-primary mb-4">
-          Mis Últimos Turnos
+          Mis Turnos Previos
         </h2>
       </div>
 

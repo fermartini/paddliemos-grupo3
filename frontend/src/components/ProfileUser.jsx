@@ -15,6 +15,8 @@ function ProfileUser({ abierto, cerrar }) {
 
   const [logoutMessage, setLogoutMessage] = useState("");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
 
   useEffect(() => {
     if (user?.name) {
@@ -26,7 +28,7 @@ function ProfileUser({ abierto, cerrar }) {
 
   const handleLogoutClick = () => {
     logout();
-    setLogoutMessage("¡Tu sesión ha sido cerrada con éxito!");
+    setLogoutMessage("¡Tu cuenta ha sido eliminada!");
     setShowLogoutModal(true);
     setTimeout(() => {
       setShowLogoutModal(false);
@@ -56,14 +58,21 @@ function ProfileUser({ abierto, cerrar }) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al actualizar el nombre.");
       }
-
-      alert("Nombre actualizado con éxito!");
+      setConfirmationMessage("¡Nombre cambiado con éxito!");
+      setShowConfirmationModal(true);
       setIsEditingName(false);
+      setTimeout(() => {
+        setShowConfirmationModal(false);
+      }, 1000);
       setUser({ name: editedName });
       localStorage.setItem("userName", editedName);
     } catch (error) {
+      setConfirmationMessage("¡Error, intentelo de nuevo más tarde!");
       console.error("Error al guardar el nombre:", error);
-      alert(`Error al actualizar el nombre: ${error.message}`);
+      setShowConfirmationModal(true);
+      setTimeout(() => {
+        setShowConfirmationModal(false);
+      }, 1000);
     }
   };
 
@@ -95,12 +104,11 @@ function ProfileUser({ abierto, cerrar }) {
           errorData.message || "Error desconocido al eliminar la cuenta."
         );
       }
-
-      alert("¡Tu cuenta ha sido eliminada exitosamente!");
+      setShowLogoutModal(true);
       handleLogoutClick();
     } catch (error) {
       console.error("Error eliminando cuenta:", error);
-      alert(`Hubo un error al intentar eliminar tu cuenta: ${error.message}`);
+      setShowLogoutModal(false);
     } finally {
       setIsDeletingAccount(false);
       setShowDeleteConfirm(false);
@@ -196,25 +204,6 @@ function ProfileUser({ abierto, cerrar }) {
                 </p>
               </div>
             </div>
-
-            <div className="flex flex-col items-center gap-4 p-3 bg-base-200 rounded-lg sm:flex-row sm:items-start">
-              <Calendar className="w-5 h-5 text-base-content shrink-0" />
-              <div className="flex-grow">
-                <p className="text-sm text-base-content text-center sm:text-left">
-                  Próximo Turno
-                </p>
-                {proximoTurno ? (
-                  <p className="font-semibold text-primary text-lg text-center sm:text-left">
-                    {formatearFechaTurno(proximoTurno.fecha)} -{" "}
-                    {proximoTurno.hora} hs
-                  </p>
-                ) : (
-                  <p className="font-semibold text-base-content text-lg text-center sm:text-left">
-                    No tienes turnos agendados.
-                  </p>
-                )}
-              </div>
-            </div>
           </div>
 
           <div className="flex flex-col gap-4">
@@ -265,23 +254,19 @@ function ProfileUser({ abierto, cerrar }) {
       )}
 
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="alert alert-success shadow-lg max-w-xs text-center flex flex-col">
+        <div className="modal modal-open backdrop-blur-sm">
+          <div className="modal-box">
             <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current flex-shrink-0 h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               <span>{logoutMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {showConfirmationModal && (
+        <div className="modal modal-open backdrop-blur-sm">
+          <div className="modal-box">
+            <div>
+              <span>{confirmationMessage}</span>
             </div>
           </div>
         </div>
