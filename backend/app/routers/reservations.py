@@ -41,8 +41,6 @@ def read_reservation(
     if db_reservation is None:
         raise HTTPException(status_code=404, detail="Reservation not found")
     return db_reservation
-<<<<<<< HEAD
-=======
 
 
 @router.delete("/reservation/{reservation_id}", response_model=dict) 
@@ -69,7 +67,6 @@ async def update_reservation(
         )
 
     return updated_reservation
->>>>>>> develop
 
 
 #Endpoint para exponer el historial de partidos de un usuario
