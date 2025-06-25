@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import HistorialTurnos from "./components/historialTurnos";
-import PerfilUsuarios from "./components/PerfilUsuarios";
+import Booking from "./components/Booking";
+import ProfileUser from "./components/ProfileUser";
 import {
   BrowserRouter,
   Routes,
@@ -50,14 +50,14 @@ function HistorialTurnosWrapper() {
         </button>
       </div>
 
-      <PerfilUsuarios
+      <ProfileUser
         abierto={mostrarPerfil}
         cerrar={() => setMostrarPerfil(false)}
       />
-      <HistorialTurnos />
+      <Booking />
       <Link to="/" className="btn btn-sm btn-primary absolute top-4 left-4">
         {" "}
-        VOLVER
+        Volver
       </Link>
     </div>
   );
@@ -69,12 +69,12 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/registro" element={<Register />} />
           <Route path="/" element={<Home />} />
           <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
           <Route
             path="/perfilUsuarios"
-            element={<PerfilUsuarios abierto={false} cerrar={() => {}} />}
+            element={<ProfileUser abierto={false} cerrar={() => {}} />}
           />
         </Routes>
       </AuthProvider>

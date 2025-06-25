@@ -2,7 +2,7 @@ import React from "react";
 import { X, User, Mail, Calendar, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
-function PerfilUsuario({ abierto, cerrar }) {
+function ProfileUser({ abierto, cerrar }) {
   if (!abierto) return null; // Não renderiza nada se 'abierto' for falso
 
   const { user, logout } = useAuth();
@@ -105,4 +105,4 @@ function PerfilUsuario({ abierto, cerrar }) {
   );
 }
 
-export default PerfilUsuario;
+export default ProfileUser;

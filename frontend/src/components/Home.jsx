@@ -17,7 +17,7 @@ function Home() {
   };
 
   const handleRegisterClick = () => {
-    navigate("/register");
+    navigate("/registro");
   };
 
   const handleLogoutClick = () => {

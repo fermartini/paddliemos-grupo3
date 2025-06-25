@@ -183,6 +183,8 @@ class ReservationOut(ReservationBase):
     class Config:
         orm_mode = True
 
+class ReservationUpdate(ReservationBase):
+    status_id: Optional[int] = None
 # --------------------
 # Turno 
 # --------------------
@@ -191,7 +193,7 @@ class TurnoOut(BaseModel):
     usuario_id: int
     fecha: date
     descripcion: str | None = None
-    estado: str = "pendiente"  # Default state
+    estado: str = "pendiente"  
 
     class Config:
         orm_mode = True

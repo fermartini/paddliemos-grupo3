@@ -12,7 +12,7 @@ const turnosEjemplo = [
   { id: 6, fecha: "2025-06-02", hora: "19:00", estado: "Agendado" },
 ];
 
-function HistorialTurnos() {
+function Booking() {
   const [turnos, setTurnos] = useState([]); // Inicializo el estado de turnos como un array vacío]);
   const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
   const [error, setError] = useState(null); // Estado para manejar errores
@@ -151,7 +151,7 @@ function HistorialTurnos() {
                 Horario:{" "}
                 <span className="font-medium text-white">{turno.hora} hs</span>
               </p>
-              {turno.estado === "Agendado" && (
+              {turno.estado === "pendiente" && (
                 <div className="flex justify-end">
                   <button
                     className="bg-green-800 hover:bg-green-600 text-white text-sm font-semibold rounded-full px-3 py-0 transition duration-200 w-auto"
@@ -210,4 +210,4 @@ function HistorialTurnos() {
   );
 }
 
-export default HistorialTurnos;
+export default Booking;
