@@ -57,7 +57,7 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
 # --------------------
 def get_court(db: Session, court_id: int):
     return db.query(models.Court).filter(models.Court.id == court_id).first()
-def get_courts(db: Session, company_id: int = None, available_only: bool = False):
+def get_courts(db: Session, company_id: Optional[int], available_only: bool = False): # Modifico company_id para que pueda ser un None
     query = db.query(models.Court)
     if company_id:
         query = query.filter(models.Court.company_id == company_id)
@@ -77,7 +77,7 @@ def update_court(db: Session, court_id: int, court_data: dict):
     if not db_court:
         return None
     
-    update_data = court_data.dict(exclude_unset=True)
+    update_data = dict(exclude_unset=True) #
     
     for field, value in update_data.items():
         setattr(db_court, field, value)
@@ -112,7 +112,7 @@ def get_time_slots(db: Session):
 def get_reservation(db: Session, reservation_id: int):
     return db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
 
-def get_reservations(db: Session, user_id: int = None, court_id: int = None, fecha: date = None):
+def get_reservations(db: Session, user_id: Optional[int] = None, court_id: Optional[int] = None, fecha: Optional[date] = None): #Modifico para que pueda ser un None
     query = db.query(models.Reservation)
     if user_id:
         query = query.filter(models.Reservation.user_id == user_id)
@@ -215,3 +215,6 @@ def get_last_3_matches(db: Session, user_id: int):
         .limit(3)\
         .all()
 
+# Funcion para devolver una lista de ususarios
+def get_users(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.User).offset(skip).limit(limit).all()

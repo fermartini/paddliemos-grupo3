@@ -18,7 +18,7 @@ async def get_current_user(token: str = Security(oauth2_scheme), db: Session = D
     try:
         payload = auth.decode_access_token(token)
         
-        email: str = payload.get("sub")
+        email = payload.get("sub") #
         
         if email is None:
             raise credentials_exception
@@ -30,6 +30,9 @@ async def get_current_user(token: str = Security(oauth2_scheme), db: Session = D
         raise credentials_exception
     except Exception as e:
         print(f"ERROR INESPERADO en get_current_user: {e}")
+        raise credentials_exception
+    
+    if token_data.email is None: # Validación para que sepa que email no es None
         raise credentials_exception
 
     user = crud.get_user_by_email(db, email=token_data.email)
