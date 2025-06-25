@@ -3,6 +3,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Booking from "./components/Booking";
 import ProfileUser from "./components/ProfileUser";
+
 import {
   BrowserRouter,
   Routes,
@@ -15,6 +16,7 @@ import Home from "./components/Home";
 import { AuthProvider } from "./context/AuthContext";
 
 function HistorialTurnosWrapper() {
+
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
 
   return (
@@ -74,7 +76,7 @@ function App() {
           <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
           <Route
             path="/perfilUsuarios"
-            element={<ProfileUser abierto={false} cerrar={() => {}} />}
+            element={<ProfileUser abierto={false} cerrar={() => { }} />}
           />
         </Routes>
       </AuthProvider>
