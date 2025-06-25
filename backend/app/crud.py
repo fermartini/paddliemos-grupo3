@@ -1,22 +1,109 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from datetime import date
+<<<<<<< HEAD
 from . import models, schemas
 from typing import Optional
+=======
+from . import models, schemas, auth
+from typing import Optional
+# --------------------
+# CRUD de Usuarios
+# --------------------
+def get_user(db: Session, user_id: int):
+    return db.query(models.User).filter(models.User.id == user_id).first()
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_user_by_name(db: Session, name: str):
+    return db.query(models.User).filter(models.User.nombre == name).first()
+
+def create_user(db: Session, user: schemas.UserCreate):
+    hashed_password = auth.get_password_hash(user.contraseña)
+
+    db_user = models.User(        
+        nombre=user.nombre,
+        email=user.email,
+        contraseña=hashed_password,
+        role_id=user.role_id,
+        company_id=user.company_id
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def delete_user(db: Session, user_id: int):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+        return db_user
+    return None
+
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if db_user:
+        update_data = user_update.model_dump(exclude_unset=True) 
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+    return db_user
+
+
+>>>>>>> develop
 
 # --------------------
 # Court CRUD
 # --------------------
 def get_court(db: Session, court_id: int):
     return db.query(models.Court).filter(models.Court.id == court_id).first()
+<<<<<<< HEAD
 
 def get_courts(db: Session, company_id: Optional[int] = None, available_only: bool = False):
+=======
+def get_courts(db: Session, company_id: int = None, available_only: bool = False):
+>>>>>>> develop
     query = db.query(models.Court)
     if company_id:
         query = query.filter(models.Court.company_id == company_id)
     if available_only:
         query = query.filter(models.Court.disponible == True)
     return query.all()
+
+def create_court(db: Session, court_data: dict):
+    db_court = models.Court(**court_data)
+    db.add(db_court)
+    db.commit()
+    db.refresh(db_court)
+    return db_court
+
+def update_court(db: Session, court_id: int, court_data: dict):
+    db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
+    if not db_court:
+        return None
+    
+    update_data = court_data.dict(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        setattr(db_court, field, value)
+    
+    db.commit()
+    db.refresh(db_court)
+    return db_court
+
+def delete_court(db: Session, court_id: int):
+    db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
+    if not db_court:
+        return None
+    
+    db.delete(db_court)
+    db.commit()
+    return db_court
 
 # --------------------
 # TimeSlot CRUD
@@ -35,7 +122,11 @@ def get_time_slots(db: Session):
 def get_reservation(db: Session, reservation_id: int):
     return db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
 
+<<<<<<< HEAD
 def get_reservations(db: Session, user_id: Optional[int] = None, court_id: Optional[int] = None, fecha: Optional[date] = None):
+=======
+def get_reservations(db: Session, user_id: int = None, court_id: int = None, fecha: date = None):
+>>>>>>> develop
     query = db.query(models.Reservation)
     if user_id:
         query = query.filter(models.Reservation.user_id == user_id)
@@ -92,7 +183,43 @@ def get_available_time_slots(db: Session, court_id: int, fecha: date):
         print(f"Error in get_available_time_slots: {str(e)}")
         raise
 
+def update_reservation(db: Session, reservation_id: int, reservation_update: schemas.ReservationUpdate):
 
+    db_reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
+
+    if not db_reservation:
+        return None
+
+    for field, value in reservation_update.model_dump(exclude_unset=True).items():
+        setattr(db_reservation, field, value)
+
+    try:
+        db.add(db_reservation) 
+        db.commit()
+        db.refresh(db_reservation) 
+        return db_reservation
+    except Exception as e:
+        db.rollback() 
+        print(f"Error al actualizar la reserva: {e}")
+        return None
+    
+def delete_reservation(db: Session, reservation_id: int): 
+    db_reservation = db.query(models.Reservation).filter(models.Reservation.id == reservation_id).first()
+
+    if not db_reservation:
+        return None
+
+    deleted_id = db_reservation.id
+
+    try:
+        db.delete(db_reservation)
+        db.commit()
+        return deleted_id
+    except Exception as e:
+        db.rollback()
+        print(f"Error al eliminar la reserva: {e}")
+        return None
+    
 # Historial ultimos 3 partidos  
 
 def get_last_3_matches(db: Session, user_id: int):
@@ -101,3 +228,7 @@ def get_last_3_matches(db: Session, user_id: int):
         .order_by(models.Reservation.fecha.desc(), models.Reservation.time_slot_id.desc())\
         .limit(3)\
         .all()
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop
