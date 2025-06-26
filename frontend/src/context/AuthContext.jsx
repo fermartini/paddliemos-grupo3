@@ -18,6 +18,13 @@ export const AuthProvider = ({ children }) => {
         };
   });
 
+  const setUser = (updatedUser) => {
+    setAuthState((prev) => ({
+      ...prev,
+      user: { ...prev.user, ...updatedUser },
+    }));
+  };
+
   const navigate = useNavigate();
 
   const registerContext = async (nombre, email, password) => {
@@ -79,6 +86,10 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.detail || "Credenciales inválidas");
       }
 
+      if (data.error || data.success === false) {
+        throw new Error(data.error || "Credenciales inválidas");
+      }
+
       const userData = {
         token: data.access_token,
         tokenType: data.token_type,
@@ -92,7 +103,6 @@ export const AuthProvider = ({ children }) => {
         JSON.stringify({
           user: userData,
           loading: false,
-          errors: {},
           successMessage: "¡Sesión iniciada con éxito!",
           showSuccessModal: true,
         })
@@ -107,10 +117,13 @@ export const AuthProvider = ({ children }) => {
         user: userData,
         successMessage,
         showSuccessModal: true,
+
         loading: false,
       }));
 
       setTimeout(() => navigate("/"), 2000);
+
+      return true;
     } catch (error) {
       localStorage.removeItem("paddliemos_session");
       setAuthState((prev) => ({
@@ -118,6 +131,7 @@ export const AuthProvider = ({ children }) => {
         errors: { general: error.message },
         loading: false,
       }));
+      return false;
     }
   };
   // Función para cerrar sesión
@@ -155,6 +169,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         setErrors,
+        setUser,
         setSuccessMessage,
         setShowSuccessModal,
         registerContext,

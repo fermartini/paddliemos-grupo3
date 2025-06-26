@@ -8,9 +8,8 @@ function Login() {
     password: "",
   });
 
-  const { login } = useAuth();
+  const { login, errors } = useAuth();
 
-  const [errores, setErrores] = useState({});
   const [mensajeExito, setMensajeExito] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -27,8 +26,13 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData.username, formData.password);
-    setShowSuccessModal(true);
+    const success = await login(formData.username, formData.password);
+    if (success) {
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowLogoutModal(false);
+      }, 2000);
+    }
   };
 
   return (
@@ -37,8 +41,8 @@ function Login() {
         <h2 className="text-2xl font-semibold mb-4 text-primary">
           Iniciar Sesión
         </h2>
-        {errores.general && (
-          <div className="alert alert-error mb-4">{errores.general}</div>
+        {errors.general && (
+          <div className="alert alert-error mb-4">{errors.general}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -58,8 +62,8 @@ function Login() {
               onChange={handleChange}
               placeholder="Ingrese su email"
             />
-            {errores.username && (
-              <p className="text-red-500 text-xs italic">{errores.username}</p>
+            {errors.username && (
+              <p className="text-red-500 text-xs italic">{errors.username}</p>
             )}
           </div>
           <div>
@@ -78,8 +82,8 @@ function Login() {
               onChange={handleChange}
               placeholder="Ingrese su contraseña"
             />
-            {errores.password && (
-              <p className="text-red-500 text-xs italic">{errores.password}</p>
+            {errors.password && (
+              <p className="text-red-500 text-xs italic">{errors.password}</p>
             )}
           </div>
           <div className="w-40 mx-auto flex flex-col space-y-2">
