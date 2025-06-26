@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-import React, { useState } from 'react'
-import { useBooking } from '../context/BookingContext'
-=======
 import React from "react";
 import { useState } from "react";
 import { useBooking } from "../context/BookingContext";
 import { useAuth } from "../context/AuthContext";
->>>>>>> develop
 
 const BookingConfirmation = () => {
   const {

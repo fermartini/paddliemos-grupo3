@@ -1,16 +1,9 @@
-<<<<<<< HEAD
-import React from 'react'
-import Login from './components/Login'
-import Register from './components/Register'
-import Home from './components/Home'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './App.css'
-=======
 import React, { useState } from "react";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Booking from "./components/Booking";
 import ProfileUser from "./components/ProfileUser";
+
 import {
   BrowserRouter,
   Routes,
@@ -23,24 +16,10 @@ import Home from "./components/Home";
 import { AuthProvider } from "./context/AuthContext";
 
 function HistorialTurnosWrapper() {
+
   const [mostrarPerfil, setMostrarPerfil] = useState(false);
->>>>>>> develop
 
-function App () {
   return (
-<<<<<<< HEAD
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/' element={<Home />} />
-      </Routes>
-    </BrowserRouter>
-  )
-}
-
-export default App
-=======
     <div
       style={{
         minHeight: "100vh",
@@ -97,7 +76,7 @@ function App() {
           <Route path="/historialTurnos" element={<HistorialTurnosWrapper />} />
           <Route
             path="/perfilUsuarios"
-            element={<ProfileUser abierto={false} cerrar={() => {}} />}
+            element={<ProfileUser abierto={false} cerrar={() => { }} />}
           />
         </Routes>
       </AuthProvider>
@@ -106,4 +85,3 @@ function App() {
 }
 
 export default App;
->>>>>>> develop
