@@ -2,18 +2,21 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import date
-from .. import crud, schemas
+from .. import crud, schemas, models
 from ..database import get_db
+from .login import get_current_user
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 @router.post("/", response_model=schemas.ReservationOut)
 def create_reservation(
     reservation: schemas.ReservationCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
+    # Aquí puedes usar current_user para saber quién está haciendo la reserva
     # crear una reserva
-
+ 
     try:
         return crud.create_reservation(db=db, reservation=reservation)
     except ValueError as e:
@@ -24,7 +27,8 @@ def read_reservations(
     user_id: Optional[int] = None,
     court_id: Optional[int] = None,
     fecha: Optional[date] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
     # todas las reservas
 
@@ -33,7 +37,8 @@ def read_reservations(
 @router.get("/{reservation_id}", response_model=schemas.ReservationOut)
 def read_reservation(
     reservation_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
     # reservas por id
 
@@ -44,7 +49,7 @@ def read_reservation(
 
 
 @router.delete("/reservation/{reservation_id}", response_model=dict) 
-def delete_reservation(reservation_id: int, db: Session = Depends(get_db)):
+def delete_reservation(reservation_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     deleted_id = crud.delete_reservation(db, reservation_id=reservation_id)
 
     if deleted_id is None:
@@ -57,6 +62,7 @@ async def update_reservation(
     reservation_id: int, 
     reservation_update: schemas.ReservationUpdate, 
     db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
 ):
     updated_reservation = crud.update_reservation(db, reservation_id=reservation_id, reservation_update=reservation_update)
 
@@ -74,7 +80,8 @@ async def update_reservation(
 @router.get("/{user_id}/last-matches", response_model=List[schemas.ReservationOut])
 def read_last_matches(
     user_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
     matches = crud.get_last_3_matches(db, user_id=user_id)
     if not matches:

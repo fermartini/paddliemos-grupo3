@@ -4,6 +4,7 @@ from typing import List, Optional
 from datetime import date
 from .. import crud, schemas, models
 from ..database import get_db
+from .login import get_current_user
 
 router = APIRouter(prefix="/courts", tags=["courts"])
 
@@ -44,7 +45,7 @@ def get_available_slots(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/", response_model=schemas.CourtOut)
-def create_court_endpoint(court: schemas.CourtCreate, db: Session = Depends(get_db) ):
+def create_court_endpoint(court: schemas.CourtCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     try:
         db_type = db.query(models.CourtType).filter(models.CourtType.id == court.type_id).first()
         if not db_type:
@@ -59,16 +60,13 @@ def create_court_endpoint(court: schemas.CourtCreate, db: Session = Depends(get_
                 detail="The specified company does not exist"
             )
         court_data = court.dict()
-
         created_court = crud.create_court(db=db, court_data=court_data)
         if not created_court:
             raise HTTPException(
                 status_code=400,
                 detail="The court could not be created"
             )
-            
         return created_court
-    
     except Exception as e:
         db.rollback()
         raise HTTPException(
@@ -80,7 +78,8 @@ def create_court_endpoint(court: schemas.CourtCreate, db: Session = Depends(get_
 def update_court(
     court_id: int, 
     court_data: schemas.CourtUpdate, 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
 ):
     try:
         # Verificar que la cancha existe primero
@@ -121,7 +120,7 @@ def update_court(
         )
 
 @router.delete("/{court_id}")
-def delete_court(court_id: int, db: Session = Depends(get_db)):
+def delete_court(court_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     # Verificar si la cancha existe
     db_court = db.query(models.Court).filter(models.Court.id == court_id).first()
     if not db_court:

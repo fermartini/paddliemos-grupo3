@@ -19,6 +19,8 @@ def seed():
     ]
     db.add_all(companies)
     db.commit()
+    # Recargar companies con IDs
+    companies = db.query(models.Company).order_by(models.Company.id).all()
 
     # 2. Roles
     roles = [
@@ -27,6 +29,8 @@ def seed():
     ]
     db.add_all(roles)
     db.commit()
+    # Recargar roles con IDs
+    roles = db.query(models.Role).order_by(models.Role.id).all()
 
     # 3. Users
     users = [
@@ -34,7 +38,6 @@ def seed():
             nombre="Admin Sistema",
             email="admin@paddliemos.com",
             contraseña="admin123",  # TODO: hashed passwords
-            telefono="1155667788",
             role_id=roles[0].id,
             company_id=companies[0].id
         ),
@@ -42,7 +45,6 @@ def seed():
             nombre="Lucía Pérez",
             email="lucia@gmail.com",
             contraseña="password123",
-            telefono="1145678901",
             role_id=roles[1].id,
             company_id=companies[0].id
         ),
@@ -50,7 +52,6 @@ def seed():
             nombre="Carlos Gómez",
             email="carlos@gmail.com",
             contraseña="password123",
-            telefono="1156789012",
             role_id=roles[1].id,
             company_id=companies[0].id
         ),
@@ -58,7 +59,6 @@ def seed():
             nombre="María Rodríguez",
             email="maria@gmail.com",
             contraseña="password123",
-            telefono="1167890123",
             role_id=roles[1].id,
             company_id=companies[1].id
         ),
@@ -66,7 +66,6 @@ def seed():
             nombre="Juan Martínez",
             email="juan@gmail.com",
             contraseña="password123",
-            telefono="1178901234",
             role_id=roles[1].id,
             company_id=companies[1].id
         )
@@ -87,41 +86,38 @@ def seed():
     courts = [
         models.Court(
             nombre="Cancha A1",
-            ubicacion="Sector Norte",
+            ubicación="Sector Norte",
             disponible=True,
-            precio_por_hora=5000,
             type_id=court_types[0].id,
             company_id=companies[0].id
         ),
         models.Court(
             nombre="Cancha A2",
-            ubicacion="Sector Norte",
+            ubicación="Sector Norte",
             disponible=True,
-            precio_por_hora=5000,
+            
             type_id=court_types[0].id,
             company_id=companies[0].id
         ),
         models.Court(
             nombre="Cancha B1",
-            ubicacion="Sector Sur",
+            ubicación="Sector Sur",
             disponible=True,
-            precio_por_hora=6000,
+           
             type_id=court_types[1].id,
             company_id=companies[0].id
         ),
         models.Court(
             nombre="Cancha C1",
-            ubicacion="Sector Central",
+            ubicación="Sector Central",
             disponible=True,
-            precio_por_hora=7000,
             type_id=court_types[2].id,
             company_id=companies[0].id
         ),
         models.Court(
             nombre="Cancha Principal",
-            ubicacion="Entrada",
+            ubicación="Entrada",
             disponible=True,
-            precio_por_hora=8000,
             type_id=court_types[2].id,
             company_id=companies[1].id
         )
@@ -159,7 +155,6 @@ def seed():
             court_id=courts[0].id,
             time_slot_id=time_slots[2].id,  # 10:00-11:00
             status_id=statuses[0].id,  # confirmada
-            notas="Primera reserva"
         ),
         models.Reservation(
             fecha=today,
@@ -174,7 +169,6 @@ def seed():
             court_id=courts[2].id,
             time_slot_id=time_slots[7].id,  # 15:00-16:00
             status_id=statuses[0].id,  # confirmada
-            notas="Partido amistoso"
         ),
         models.Reservation(
             fecha=today + timedelta(days=1),
@@ -189,7 +183,6 @@ def seed():
             court_id=courts[4].id,
             time_slot_id=time_slots[10].id,  # 18:00-19:00
             status_id=statuses[3].id,  # completada
-            notas="Clase con profesor"
         ),
         models.Reservation(
             fecha=today - timedelta(days=2),
@@ -197,7 +190,6 @@ def seed():
             court_id=courts[0].id,
             time_slot_id=time_slots[3].id,  # 11:00-12:00
             status_id=statuses[1].id,  # cancelada
-            notas="Cancelado por lluvia"
         )
     ]
     db.add_all(reservations)
@@ -227,4 +219,4 @@ def seed_time_slots():
     db.close()
 
 if __name__ == "__main__":
-    seed_time_slots()
+    seed()

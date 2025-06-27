@@ -3,6 +3,8 @@ from sqlalchemy import and_
 from datetime import date
 from . import models, schemas, auth
 from typing import Optional
+
+
 # --------------------
 # CRUD de Usuarios
 # --------------------
@@ -19,7 +21,7 @@ def get_user_by_name(db: Session, name: str):
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = auth.get_password_hash(user.contraseña)
 
-    db_user = models.User(        
+    db_user = models.User(
         nombre=user.nombre,
         email=user.email,
         contraseña=hashed_password,
@@ -144,7 +146,7 @@ def create_reservation(db: Session, reservation: schemas.ReservationCreate):
 def get_available_time_slots(db: Session, court_id: int, fecha: date):
     try:
         all_slots = get_time_slots(db)
-        
+
         booked_reservations = db.query(models.Reservation).filter(
             and_(
                 models.Reservation.court_id == court_id,
