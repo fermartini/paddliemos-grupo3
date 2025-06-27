@@ -12,7 +12,8 @@ function Register() {
 
   const {
     registerContext,
-    errors,
+    errors, 
+    setErrors, 
     loading,
     successMessage,
     showSuccessModal,
@@ -23,6 +24,7 @@ function Register() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
   const handleGoBack = () => {
@@ -32,8 +34,31 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación básica
-    if (formData.password !== formData.confirmarPassword) {
+    setErrors({});
+
+    let newErrors = {};
+
+    if (!formData.nombre.trim()) {
+      newErrors.nombre = "El nombre es obligatorio.";
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = "El email es obligatorio.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "El email no es válido.";
+    }
+    if (!formData.password) {
+      newErrors.password = "La contraseña es obligatoria.";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    }
+    if (!formData.confirmarPassword) {
+      newErrors.confirmarPassword = "Confirme su contraseña.";
+    } else if (formData.password !== formData.confirmarPassword) {
+      newErrors.confirmarPassword = "Las contraseñas no coinciden.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -132,13 +157,15 @@ function Register() {
             <button
               type="submit"
               className="btn btn-primary rounded-lg w-full text-black"
+              disabled={loading} 
             >
-              Registrarse
+              {loading ? "Registrando..." : "Registrarse"}
             </button>
             <button
               type="button"
               onClick={handleGoBack}
               className="btn btn-secondary rounded-lg w-full text-black"
+              disabled={loading} 
             >
               Volver
             </button>

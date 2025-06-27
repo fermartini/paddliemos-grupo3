@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -7,13 +7,26 @@ function Login() {
     username: "",
     password: "",
   });
-
-  const { login, errors } = useAuth();
+  const { login, errors } = useAuth(); 
 
   const [mensajeExito, setMensajeExito] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showGeneralError, setShowGeneralError] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (errors.general) {
+      setShowGeneralError(true);
+      const timer = setTimeout(() => {
+        setShowGeneralError(false);
+      }, 800); 
+      return () => clearTimeout(timer);
+    } else {
+      setShowGeneralError(false);
+    }
+  }, [errors.general]); 
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,12 +39,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowGeneralError(false);
+
     const success = await login(formData.username, formData.password);
     if (success) {
+      setMensajeExito("¡Inicio de sesión exitoso!");
       setShowSuccessModal(true);
       setTimeout(() => {
-        setShowLogoutModal(false);
+        setShowSuccessModal(false);
+        navigate("/");
       }, 2000);
+    } else {
     }
   };
 
@@ -41,7 +59,7 @@ function Login() {
         <h2 className="text-2xl font-semibold mb-4 text-primary">
           Iniciar Sesión
         </h2>
-        {errors.general && (
+        {showGeneralError && errors.general && (
           <div className="alert alert-error mb-4">{errors.general}</div>
         )}
 

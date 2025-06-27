@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -110,7 +109,6 @@ export const AuthProvider = ({ children }) => {
       // Guardar en localStorage
       localStorage.setItem("authToken", data.access_token);
       localStorage.setItem("userName", data.user_name);
-      // ... otros items que necesites
 
       setAuthState((prev) => ({
         ...prev,
