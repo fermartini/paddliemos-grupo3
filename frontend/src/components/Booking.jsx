@@ -50,7 +50,7 @@ function Booking() {
             id: turno.id,
             fecha: turno.fecha,
             hora: turno.time_slot?.hora_inicio || "N/A",
-            // ¡¡¡AGREGADO AQUÍ para asegurar que turnoAConfirmar tenga estos datos!!!
+            
             court_id: turno.court_id,
             time_slot_id: turno.time_slot_id,
             estado: estadoActual,
@@ -95,16 +95,16 @@ function Booking() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`, // Envía el token
+          Authorization: `Bearer ${user.token}`, 
         },
         body: JSON.stringify({
-          // ¡¡¡CORRECCIÓN CLAVE AQUÍ!!!
-          // Incluye todos los campos que el backend está esperando
-          status_id: 3, // Envía el ID 3 para "Cancelado"
-          user_id: user.id, // El ID del usuario actual
-          court_id: turno.court_id, // El ID de la cancha de la reserva
-          fecha: turno.fecha, // La fecha original de la reserva
-          time_slot_id: turno.time_slot_id, // El ID del slot de tiempo de la reserva
+          
+          
+          status_id: 3, 
+          user_id: user.id, 
+          court_id: turno.court_id, 
+          fecha: turno.fecha, 
+          time_slot_id: turno.time_slot_id, 
         }),
       })
         .then((res) => {
@@ -129,7 +129,7 @@ function Booking() {
         .then((data) => {
           console.log("Respuesta del backend al cancelar:", data);
 
-          // Actualiza el estado en el frontend para reflejar la cancelación
+       
           const nuevosTurnos = turnos.map((turno) =>
             turno.id === turnoAConfirmar.id
               ? { ...turno, estado: "Cancelado" }
